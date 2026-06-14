@@ -225,6 +225,9 @@ const DICT = {
   "footer.bannerTitle": { mn: "Ширээгээ зөв аргаар захиал.", en: "Reserve your table the right way." },
   "footer.bannerSub": { mn: "Улирлын цэс болон онцгой үйл явдлуудын мэдээллийг хамгийн түрүүнд аваарай.", en: "Get seasonal menus and exclusive event updates before anyone else." },
   "footer.subscribe": { mn: "Захиалах — Үнэгүй", en: "Subscribe – Free" },
+  "footer.emailPlaceholder": { mn: "Имэйл хаягаа оруулна уу", en: "Enter your email" },
+  "footer.subscribeShort": { mn: "Бүртгүүлэх", en: "Subscribe" },
+  "footer.subscribed": { mn: "Баярлалаа! Бид удахгүй холбоо барина.", en: "Thanks! We'll be in touch soon." },
 } as const;
 
 export type DictKey = keyof typeof DICT;
