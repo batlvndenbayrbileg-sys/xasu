@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Star, ChevronRight, UtensilsCrossed, CalendarRange } from "lucide-react";
 import CategoryTabs from "@/components/CategoryTabs";
 import DishCard from "@/components/DishCard";
@@ -192,53 +192,61 @@ function RestaurantRevealDesktop() {
 function RestaurantRevealMobile() {
   const { t } = useI18n();
   const titleLines = t("home.experienceTitle").split("\n");
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Scroll-driven reveal — transform + border-radius only (NO clip-path).
+  // This avoids the iOS Safari clip-path corner-rounding snap that creates
+  // the mid-animation "rectangle jump" the user reported.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start center", "end end"],
+  });
+  const scale = useTransform(scrollYProgress, [0, 0.7], [0.55, 1]);
+  const radius = useTransform(scrollYProgress, [0, 0.7], [180, 16]);
+  const opacity = useTransform(scrollYProgress, [0, 0.25], [0, 1]);
+
   return (
-    <section className="mt-24">
-      <div
-        className="relative overflow-hidden px-4 py-14 text-white"
-        style={{
-          background:
-            "radial-gradient(70% 60% at 50% 15%, #2a1a0e 0%, #1a1208 40%, #0c0805 80%, #050302 100%)",
-        }}
-      >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="space-y-3 text-center max-w-md mx-auto"
+    <section ref={sectionRef} className="mt-24 relative">
+      <div className="h-[180vh]">
+        <div
+          className="sticky top-0 h-screen overflow-hidden px-4 py-12 text-white flex flex-col items-center justify-center"
+          style={{
+            background:
+              "radial-gradient(70% 60% at 50% 15%, #2a1a0e 0%, #1a1208 40%, #0c0805 80%, #050302 100%)",
+          }}
         >
-          <p className="text-accent font-semibold text-[13px] tracking-wide uppercase">{t("home.experienceKicker")}</p>
-          <h2 className="font-display text-[34px] font-bold leading-[1.05] tracking-tight">
-            {titleLines.map((l, i) => (<span key={i} className="block">{l}</span>))}
-          </h2>
-          <p className="mx-auto max-w-[42ch] text-white/70 text-[14px] pt-2">{t("home.experienceSub")}</p>
-        </motion.div>
+          <div className="space-y-2.5 text-center max-w-md mx-auto">
+            <p className="text-accent font-semibold text-[13px] tracking-wide uppercase">{t("home.experienceKicker")}</p>
+            <h2 className="font-display text-[34px] font-bold leading-[1.05] tracking-tight">
+              {titleLines.map((l, i) => (<span key={i} className="block">{l}</span>))}
+            </h2>
+            <p className="mx-auto max-w-[42ch] text-white/70 text-[14px] pt-1">{t("home.experienceSub")}</p>
+          </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="my-7 mx-auto w-full max-w-md aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/restaurant-hall.png" alt="GourmetGrove dining hall" className="w-full h-full object-cover object-center" />
-        </motion.div>
+          {/* The image grows from a small pill to a full rounded card.
+              transform: scale + border-radius are both GPU-accelerated and
+              animate smoothly throughout the entire scroll, no snap. */}
+          <motion.div
+            style={{
+              scale,
+              borderRadius: radius,
+              opacity,
+              willChange: "transform, border-radius",
+            }}
+            className="my-7 w-full max-w-md aspect-[4/3] overflow-hidden shadow-2xl ring-1 ring-white/10 mx-auto"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/restaurant-hall.png" alt="GourmetGrove dining hall" className="w-full h-full object-cover object-center" />
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-center"
-        >
-          <Link href="/book"
-            className="inline-flex items-center gap-2 rounded-full border border-accent bg-accent/10 px-6 py-3 text-white font-semibold shadow-[0px_4px_24px_rgba(255,106,26,0.55)] hover:bg-accent transition-colors">
-            <UtensilsCrossed size={16} className="text-white" />
-            {t("home.orderFood")}
-          </Link>
-        </motion.div>
+          <motion.div style={{ opacity }} className="text-center">
+            <Link href="/book"
+              className="inline-flex items-center gap-2 rounded-full border border-accent bg-accent/10 px-6 py-3 text-white font-semibold shadow-[0px_4px_24px_rgba(255,106,26,0.55)] hover:bg-accent transition-colors">
+              <UtensilsCrossed size={16} className="text-white" />
+              {t("home.orderFood")}
+            </Link>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
