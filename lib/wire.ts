@@ -1,7 +1,7 @@
 import { randomUUID, createHmac, timingSafeEqual } from "node:crypto";
 
 /**
- * Wire Payment gateway client (https://api.wirepayment.mn).
+ * Wire Payment gateway client (https://api.wire.mn).
  * Stripe-style PaymentIntents, MNT integer amounts, QPay operator.
  *
  * Live mode requires WIRE_SECRET_KEY (sk_live_…). Without it the client runs in
@@ -9,7 +9,7 @@ import { randomUUID, createHmac, timingSafeEqual } from "node:crypto";
  * created with a QR next_action and auto-succeeds a few seconds after confirm.
  */
 
-const BASE = "https://api.wirepayment.mn/v1";
+const BASE = "https://api.wire.mn/v1";
 const KEY = process.env.WIRE_SECRET_KEY;
 export const WIRE_LIVE = !!KEY;
 
