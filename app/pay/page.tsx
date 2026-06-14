@@ -76,6 +76,12 @@ function PayInner() {
   }, [reservationId, finish, goLogin, messageFor, t]);
 
   useEffect(() => {
+    // Re-run whenever the reservation changes — the App Router reuses this
+    // component across /pay?r=… navigations, so we must reset stale state and
+    // re-initialise for the new reservation rather than keep the old one's.
+    if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; }
+    setQr(null); setError(null); setAmount(0); setMock(false);
+
     if (isReturn) {
       // Returning from hosted checkout — verify status, don't create a new session.
       if (!reservationId) { setPhase("error"); setError(t("pay.errorGeneric")); return; }
@@ -84,7 +90,7 @@ function PayInner() {
     }
     start();
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, []);
+  }, [reservationId, isReturn]);
 
   // Poll for completion while waiting (mock QR) or verifying (return from checkout).
   useEffect(() => {
