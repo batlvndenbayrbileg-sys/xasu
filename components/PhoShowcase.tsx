@@ -35,7 +35,7 @@ export default function PhoShowcase() {
 
   return (
     <section ref={ref} className="relative mt-24" style={{ height: `${SLIDES.length * 100}vh` }}>
-      <div className="sticky top-0 h-screen overflow-hidden bg-[#faf8f5] flex items-center pt-16 lg:pt-0">
+      <div className="sticky top-0 h-screen overflow-hidden bg-[var(--bg)] flex items-center pt-16 lg:pt-0">
         {/* brand-coloured ambient glows so it feels part of the site, not a different page */}
         <div className="pointer-events-none absolute -top-32 -left-20 w-[460px] h-[460px] rounded-full bg-accent/15 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-40 -right-10 w-[520px] h-[520px] rounded-full bg-amber-300/15 blur-3xl" />

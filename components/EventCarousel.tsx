@@ -159,8 +159,8 @@ export default function EventCarousel() {
       {/* the rail */}
       <div className="relative mt-7 -mx-4 sm:-mx-6 lg:-mx-8">
         {/* edge fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#faf8f5] to-transparent z-10" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#faf8f5] to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[var(--bg)] to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[var(--bg)] to-transparent z-10" />
 
         <div ref={trackRef}
           onMouseEnter={() => setPaused(true)}

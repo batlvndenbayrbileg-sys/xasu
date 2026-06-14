@@ -36,7 +36,7 @@ export default function MenuPage() {
 
         {/* Sticky so the active category is always reachable while scrolling
             the long dish grid — no need to scroll back up to switch. */}
-        <div className="sticky top-[68px] md:top-[76px] z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 mt-5 bg-[#faf8f5]/85 backdrop-blur-md border-b border-line/60">
+        <div className="sticky top-[68px] md:top-[76px] z-30 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 mt-5 bg-[var(--bg)]/85 backdrop-blur-md border-b border-line/60">
           <CategoryTabs value={cat} onChange={setCat} />
         </div>
 

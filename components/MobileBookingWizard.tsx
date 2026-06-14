@@ -109,9 +109,9 @@ export default function MobileBookingWizard() {
   }
 
   return (
-    <div className="lg:hidden min-h-[calc(100vh-4rem)] flex flex-col bg-[#faf8f5]">
+    <div className="lg:hidden min-h-[calc(100vh-4rem)] flex flex-col bg-[var(--bg)]">
       {/* TOP BAR — back + progress */}
-      <header className="sticky top-[64px] z-30 bg-[#faf8f5]/90 backdrop-blur border-b border-line">
+      <header className="sticky top-[64px] z-30 bg-[var(--bg)]/90 backdrop-blur border-b border-line">
         <div className="flex items-center gap-3 px-4 py-3">
           <button onClick={() => (step === 1 ? router.back() : back())}
             className="w-9 h-9 rounded-full border border-line bg-white grid place-items-center text-ink active:scale-95 transition">

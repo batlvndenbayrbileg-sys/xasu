@@ -5,6 +5,7 @@
 :root {
   --bg: #faf8f5;
 }
+.dark { --bg: #0b0c0f; }
 
 html { scroll-behavior: smooth; }
 body {
@@ -64,10 +65,17 @@ img { -webkit-user-drag: none; }
 
 /* surfaces */
 .dark .bg-white,
+.dark .bg-white\/70,
 .dark .bg-white\/80,
 .dark .bg-white\/85,
 .dark .bg-white\/90,
 .dark .bg-white\/95 { background-color: #14161b !important; }
+/* low-opacity whites used over dark heroes — keep them light & translucent
+   so they still read as glass on the dark theme rather than going invisible */
+.dark .bg-white\/8,
+.dark .bg-white\/10,
+.dark .bg-white\/15,
+.dark .bg-white\/25 { background-color: rgba(255,255,255,0.06) !important; }
 .dark .bg-neutral-50 { background-color: #181a20 !important; }
 .dark .bg-neutral-100 { background-color: #1e2128 !important; }
 .dark .bg-neutral-200 { background-color: #2a2e37 !important; }
