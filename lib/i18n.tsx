@@ -161,6 +161,13 @@ const DICT = {
   "pay.mockNote": { mn: "Туршилтын горим — төлбөр автоматаар амжилттай болно.", en: "Demo mode — payment auto-succeeds." },
   "pay.payNow": { mn: "Төлбөр төлөх", en: "Pay now" },
   "pay.later": { mn: "Дараа төлөх", en: "Pay later" },
+  "pay.redirecting": { mn: "Аюулгүй төлбөрийн хуудас руу шилжүүлж байна…", en: "Redirecting to secure checkout…" },
+  "pay.verifying": { mn: "Төлбөрийг баталгаажуулж байна…", en: "Verifying your payment…" },
+  "pay.errorGeneric": { mn: "Төлбөр боловсруулахад алдаа гарлаа. Дахин оролдоно уу.", en: "Something went wrong processing the payment. Please try again." },
+  "pay.timeoutTitle": { mn: "Төлбөр хараахан баталгаажаагүй байна", en: "Payment not confirmed yet" },
+  "pay.timeoutSub": { mn: "Хэрэв та төлбөрөө төлсөн бол доорх товчоор төлвөө дахин шалгана уу.", en: "If you've already paid, re-check the status below." },
+  "pay.checkStatus": { mn: "Төлбөрийн төлөв шалгах", en: "Check payment status" },
+  "pay.secure": { mn: "Таны төлбөрийг Wire Payment найдвартай боловсруулна", en: "Payments are processed securely by Wire Payment" },
 
   // orders
   "orders.kicker": { mn: "Таны бүртгэл", en: "Your account" },

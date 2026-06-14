@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, ShieldCheck, CheckCircle2, QrCode, ArrowRight } from "lucide-react";
+import { Loader2, ShieldCheck, CheckCircle2, QrCode, ArrowRight, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { getJson, sendJson } from "@/lib/fetcher";
 import { useI18n } from "@/lib/i18n";
@@ -17,7 +17,10 @@ export default function PayPage() {
   );
 }
 
-type Phase = "loading" | "action" | "waiting" | "success" | "error";
+type Phase = "loading" | "redirecting" | "waiting" | "verifying" | "success" | "timeout" | "error";
+
+const POLL_INTERVAL = 2500;
+const MAX_POLLS = 40; // ~100s before we surface a "not confirmed yet" state
 
 function PayInner() {
   const router = useRouter();
@@ -25,6 +28,7 @@ function PayInner() {
   const searchParams = useSearchParams();
   const reservationId = searchParams.get("r") ?? "";
   const isReturn = searchParams.get("return") === "1";
+
   const [phase, setPhase] = useState<Phase>("loading");
   const [amount, setAmount] = useState(0);
   const [qr, setQr] = useState<string | null>(null);
@@ -32,72 +36,79 @@ function PayInner() {
   const [error, setError] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Map an API error code to a friendly, localized message (never show raw codes).
+  const messageFor = useCallback(
+    (code?: string | null) => {
+      switch (code) {
+        case "not_found":
+          return t("conf.notFound");
+        default:
+          return t("pay.errorGeneric");
+      }
+    },
+    [t]
+  );
+
   const finish = useCallback(() => {
     setPhase("success");
     toast.success(t("pay.success"));
     setTimeout(() => router.push(`/confirmation?id=${reservationId}`), 1100);
   }, [router, reservationId, t]);
 
+  const goLogin = useCallback(() => {
+    const back = `/pay?r=${reservationId}${isReturn ? "&return=1" : ""}`;
+    router.push(`/login?redirect=${encodeURIComponent(back)}`);
+  }, [router, reservationId, isReturn]);
+
+  // Create the intent and either redirect to hosted checkout or show the mock QR.
   const start = useCallback(async () => {
-    if (!reservationId) { setPhase("error"); setError("Missing reservation"); return; }
+    if (!reservationId) { setPhase("error"); setError(t("pay.errorGeneric")); return; }
     setPhase("loading"); setError(null);
     const { ok, status, data, error } = await sendJson<any>("/api/payments/intent", "POST", { reservationId });
-    if (status === 401) { router.push(`/login?redirect=/pay?r=${reservationId}`); return; }
-    if (!ok || !data) { setPhase("error"); setError(error ?? "Payment error"); return; }
-    setAmount(data.amount); setMock(!!data.mock);
+    if (status === 401) return goLogin();
+    if (!ok || !data) { setPhase("error"); setError(messageFor(error)); return; }
+    setAmount(data.amount ?? 0); setMock(!!data.mock);
     if (data.status === "succeeded") return finish();
-    if (data.checkoutUrl) { window.location.href = data.checkoutUrl; return; }
+    if (data.checkoutUrl) { setPhase("redirecting"); window.location.href = data.checkoutUrl; return; }
+    // mock mode: inline QR
     setQr(data.nextAction?.qr_image ?? null);
     setPhase("waiting");
-  }, [reservationId, router, finish]);
+  }, [reservationId, finish, goLogin, messageFor, t]);
 
   useEffect(() => {
-    // Returning from hosted checkout: don't create a new session, just poll status.
     if (isReturn) {
-      if (!reservationId) { setPhase("error"); setError("Missing reservation"); return; }
-      setPhase("waiting");
+      // Returning from hosted checkout — verify status, don't create a new session.
+      if (!reservationId) { setPhase("error"); setError(t("pay.errorGeneric")); return; }
+      setPhase("verifying");
       return;
     }
     start();
-    /* eslint-disable-next-line */
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, []);
 
-  // poll for completion
+  // Poll for completion while waiting (mock QR) or verifying (return from checkout).
   useEffect(() => {
-    if (phase !== "waiting") return;
+    if (phase !== "waiting" && phase !== "verifying") return;
     let cancelled = false;
     let attempts = 0;
-    const MAX_ATTEMPTS = 40; // ~100s
 
     const check = async () => {
       attempts++;
       const { ok, status, data } = await getJson<any>(`/api/payments/intent?reservationId=${reservationId}`);
       if (cancelled) return;
-      if (status === 401) {
-        if (pollRef.current) clearInterval(pollRef.current);
-        router.push(`/login?redirect=${encodeURIComponent(`/pay?r=${reservationId}${isReturn ? "&return=1" : ""}`)}`);
-        return;
-      }
-      if (ok && data?.status === "succeeded") {
-        if (pollRef.current) clearInterval(pollRef.current);
-        finish();
-        return;
-      }
-      if (ok && data?.status === "canceled") {
-        if (pollRef.current) clearInterval(pollRef.current);
-        setPhase("error"); setError(t("pay.failed"));
-        return;
-      }
-      if (attempts >= MAX_ATTEMPTS) {
-        if (pollRef.current) clearInterval(pollRef.current);
-        setPhase("error"); setError(t("pay.failed"));
-      }
+      if (status === 401) { stop(); goLogin(); return; }
+      if (ok && (data?.status === "succeeded" || data?.paymentStatus === "paid")) { stop(); finish(); return; }
+      if (ok && data?.status === "canceled") { stop(); setPhase("error"); setError(t("pay.failed")); return; }
+      if (attempts >= MAX_POLLS) { stop(); setPhase("timeout"); }
     };
+    const stop = () => { if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null; } };
 
     check();
-    pollRef.current = setInterval(check, 2500);
-    return () => { cancelled = true; if (pollRef.current) clearInterval(pollRef.current); };
-  }, [phase, reservationId, finish, isReturn, router, t]);
+    pollRef.current = setInterval(check, POLL_INTERVAL);
+    return () => { cancelled = true; stop(); };
+  }, [phase, reservationId, finish, goLogin, t]);
+
+  const busy = phase === "loading" || phase === "redirecting";
 
   return (
     <div className="pt-24 md:pt-32 min-h-[80vh]">
@@ -113,9 +124,19 @@ function PayInner() {
             <span className="font-display text-[26px] font-bold">{formatMnt(amount || 20000)}</span>
           </div>
 
-          {phase === "loading" && (
+          {busy && (
             <div className="py-12 grid place-items-center text-neutral-400">
-              <Loader2 className="animate-spin" /><span className="text-[13px] mt-3">{t("pay.creating")}</span>
+              <Loader2 className="animate-spin" />
+              <span className="text-[13px] mt-3">
+                {phase === "redirecting" ? t("pay.redirecting") : t("pay.creating")}
+              </span>
+            </div>
+          )}
+
+          {phase === "verifying" && (
+            <div className="py-12 grid place-items-center text-neutral-500">
+              <Loader2 className="animate-spin text-accent" />
+              <span className="text-[13px] mt-3">{t("pay.verifying")}</span>
             </div>
           )}
 
@@ -128,9 +149,21 @@ function PayInner() {
 
           {phase === "error" && (
             <div className="py-10 grid place-items-center">
-              <p className="text-red-500 font-medium">{error ?? t("pay.failed")}</p>
+              <AlertCircle size={40} className="text-red-500" />
+              <p className="text-red-500 font-medium mt-3">{error ?? t("pay.failed")}</p>
               <button onClick={start} className="mt-5 bg-accent text-white font-semibold px-7 py-3 rounded-full shadow-glow hover:bg-accent-soft transition">
                 {t("pay.retry")}
+              </button>
+            </div>
+          )}
+
+          {phase === "timeout" && (
+            <div className="py-10 grid place-items-center">
+              <AlertCircle size={40} className="text-amber-500" />
+              <p className="font-semibold mt-3">{t("pay.timeoutTitle")}</p>
+              <p className="text-[13px] text-muted mt-1.5 max-w-[18rem]">{t("pay.timeoutSub")}</p>
+              <button onClick={() => setPhase("verifying")} className="mt-5 bg-accent text-white font-semibold px-7 py-3 rounded-full shadow-glow hover:bg-accent-soft transition">
+                {t("pay.checkStatus")}
               </button>
             </div>
           )}
@@ -155,10 +188,10 @@ function PayInner() {
         </div>
 
         <div className="flex items-center justify-center gap-1.5 text-[12px] text-muted mt-4">
-          <ShieldCheck size={14} className="text-emerald-500" /> Wire Payment · QPay
+          <ShieldCheck size={14} className="text-emerald-500" /> {t("pay.secure")}
         </div>
 
-        {phase !== "success" && (
+        {phase !== "success" && phase !== "redirecting" && (
           <button onClick={() => router.push("/orders")} className="mt-4 text-[13px] font-semibold text-muted hover:text-ink transition inline-flex items-center gap-1">
             {t("pay.later")} <ArrowRight size={14} />
           </button>

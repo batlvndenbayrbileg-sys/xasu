@@ -9,17 +9,22 @@ export const dynamic = "force-dynamic";
 /** Create (and dispatch) a deposit PaymentIntent for a reservation. Idempotent. */
 export async function POST(req: Request) {
   const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
 
-  const { reservationId } = await req.json();
-  if (!reservationId) return NextResponse.json({ error: "reservationId required" }, { status: 400 });
+  let reservationId: string | undefined;
+  try {
+    ({ reservationId } = await req.json());
+  } catch {
+    return NextResponse.json({ error: "bad_request" }, { status: 400 });
+  }
+  if (!reservationId) return NextResponse.json({ error: "bad_request" }, { status: 400 });
 
   const reservation = await prisma.reservation.findFirst({
     where: { id: reservationId, userId: user.id },
   });
-  if (!reservation) return NextResponse.json({ error: "Reservation not found" }, { status: 404 });
+  if (!reservation) return NextResponse.json({ error: "not_found" }, { status: 404 });
   if (reservation.paymentStatus === "paid")
-    return NextResponse.json({ data: { status: "succeeded", paymentStatus: "paid" } });
+    return NextResponse.json({ data: { status: "succeeded", paymentStatus: "paid", amount: reservation.amount } });
 
   try {
     // Reuse the existing intent if one was already created (idempotent retries).
@@ -56,24 +61,32 @@ export async function POST(req: Request) {
       idempotencyKey: `sess_${reservation.id}`,
     });
 
+    if (!session.url) {
+      console.error("[payments/intent POST] empty checkout url", { reservationId, intent: intent.id });
+      return NextResponse.json({ error: "payment_failed" }, { status: 502 });
+    }
+
     return NextResponse.json({
       data: { id: intent.id, status: intent.status, amount: reservation.amount, checkoutUrl: session.url, mock: false },
     });
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? "Payment error" }, { status: 502 });
+    // Log the real upstream error (visible in Vercel logs) but never leak
+    // gateway-internal messages to the client.
+    console.error("[payments/intent POST]", { reservationId, message: e?.message, status: e?.status });
+    return NextResponse.json({ error: "payment_failed" }, { status: 502 });
   }
 }
 
 /** Poll a reservation's deposit status; flips reservation to paid on success. */
 export async function GET(req: Request) {
   const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  if (!user) return NextResponse.json({ error: "unauthenticated" }, { status: 401 });
 
   const reservationId = new URL(req.url).searchParams.get("reservationId");
-  if (!reservationId) return NextResponse.json({ error: "reservationId required" }, { status: 400 });
+  if (!reservationId) return NextResponse.json({ error: "bad_request" }, { status: 400 });
 
   const reservation = await prisma.reservation.findFirst({ where: { id: reservationId, userId: user.id } });
-  if (!reservation) return NextResponse.json({ error: "Reservation not found" }, { status: 404 });
+  if (!reservation) return NextResponse.json({ error: "not_found" }, { status: 404 });
   if (reservation.paymentStatus === "paid")
     return NextResponse.json({ data: { status: "succeeded", paymentStatus: "paid" } });
   if (!reservation.paymentIntentId)
@@ -88,6 +101,7 @@ export async function GET(req: Request) {
       data: { status: intent.status, paymentStatus: intent.status === "succeeded" ? "paid" : reservation.paymentStatus },
     });
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? "Payment error" }, { status: 502 });
+    console.error("[payments/intent GET]", { reservationId, message: e?.message, status: e?.status });
+    return NextResponse.json({ error: "payment_failed" }, { status: 502 });
   }
 }
