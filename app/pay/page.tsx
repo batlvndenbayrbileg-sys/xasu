@@ -117,13 +117,13 @@ function PayInner() {
   const busy = phase === "loading" || phase === "redirecting";
 
   return (
-    <div className="pt-24 md:pt-32 min-h-[80vh]">
+    <div className="pt-20 md:pt-32 min-h-[80vh] pb-12">
       <div className="mx-auto max-w-md px-4 sm:px-6 text-center">
-        <p className="text-accent font-semibold text-[14px] tracking-wide uppercase">{t("pay.step")}</p>
-        <h1 className="font-display text-[30px] md:text-[40px] font-bold mt-1">{t("pay.title")}</h1>
-        <p className="text-muted mt-2">{t("pay.sub")}</p>
+        <p className="text-accent font-semibold text-[13px] md:text-[14px] tracking-wide uppercase">{t("pay.step")}</p>
+        <h1 className="font-display text-[28px] md:text-[40px] font-bold mt-1">{t("pay.title")}</h1>
+        <p className="text-muted mt-2 text-[14px] md:text-[16px]">{t("pay.sub")}</p>
 
-        <div className="mt-7 bg-white border border-line rounded-3xl shadow-card p-6">
+        <div className="mt-6 md:mt-7 bg-white border border-line rounded-3xl shadow-card p-5 md:p-6">
           {/* amount */}
           <div className="flex items-center justify-between pb-5 border-b border-line">
             <span className="text-muted text-[14px]">{t("pay.deposit")}</span>
@@ -157,7 +157,7 @@ function PayInner() {
             <div className="py-10 grid place-items-center">
               <AlertCircle size={40} className="text-red-500" />
               <p className="text-red-500 font-medium mt-3">{error ?? t("pay.failed")}</p>
-              <button onClick={start} className="mt-5 bg-accent text-white font-semibold px-7 py-3 rounded-full shadow-glow hover:bg-accent-soft transition">
+              <button onClick={start} className="mt-5 w-full sm:w-auto bg-accent text-white font-semibold px-7 py-4 sm:py-3 rounded-full shadow-glow hover:bg-accent-soft active:scale-[0.98] transition">
                 {t("pay.retry")}
               </button>
             </div>
@@ -168,7 +168,7 @@ function PayInner() {
               <AlertCircle size={40} className="text-amber-500" />
               <p className="font-semibold mt-3">{t("pay.timeoutTitle")}</p>
               <p className="text-[13px] text-muted mt-1.5 max-w-[18rem]">{t("pay.timeoutSub")}</p>
-              <button onClick={() => setPhase("verifying")} className="mt-5 bg-accent text-white font-semibold px-7 py-3 rounded-full shadow-glow hover:bg-accent-soft transition">
+              <button onClick={() => setPhase("verifying")} className="mt-5 w-full sm:w-auto bg-accent text-white font-semibold px-7 py-4 sm:py-3 rounded-full shadow-glow hover:bg-accent-soft active:scale-[0.98] transition">
                 {t("pay.checkStatus")}
               </button>
             </div>

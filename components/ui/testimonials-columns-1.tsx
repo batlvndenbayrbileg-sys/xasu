@@ -1,15 +1,13 @@
 "use client";
 
 import React from "react";
-// Adapted from `motion/react` → the project already ships `framer-motion`
-// (same API), so we reuse it instead of adding another dependency.
 import { motion } from "framer-motion";
+import { Quote } from "lucide-react";
 
 export interface Testimonial {
   text: string;
-  image: string;
-  name: string;
-  role: string;
+  /** Anonymised display label, e.g. "Үйлчлүүлэгч". */
+  label?: string;
 }
 
 export const TestimonialsColumn = (props: {
@@ -31,28 +29,16 @@ export const TestimonialsColumn = (props: {
       >
         {[...new Array(2).fill(0)].map((_, index) => (
           <React.Fragment key={index}>
-            {props.testimonials.map(({ text, image, name, role }, i) => (
+            {props.testimonials.map(({ text, label }, i) => (
               <div
-                className="p-8 rounded-3xl border border-line bg-white shadow-card max-w-xs w-full"
+                className="relative p-8 rounded-3xl border border-line bg-white shadow-card max-w-xs w-full"
                 key={i}
               >
+                <Quote size={22} className="text-accent/70 absolute top-5 right-5" strokeWidth={2.4} />
                 <p className="text-[14px] leading-relaxed text-neutral-700">{text}</p>
-                <div className="flex items-center gap-2.5 mt-5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    width={40}
-                    height={40}
-                    src={image}
-                    alt={name}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-10 w-10 rounded-full object-cover"
-                  />
-                  <div className="flex flex-col">
-                    <div className="font-semibold tracking-tight leading-5">{name}</div>
-                    <div className="leading-5 opacity-60 tracking-tight text-[13px]">{role}</div>
-                  </div>
-                </div>
+                {label && (
+                  <p className="mt-5 text-[12px] font-semibold tracking-wide uppercase text-accent">{label}</p>
+                )}
               </div>
             ))}
           </React.Fragment>

@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 import FloorPlan from "@/components/FloorPlan";
 import Table360 from "@/components/Table360";
+import MobileBookingWizard from "@/components/MobileBookingWizard";
 import { useBookingStore } from "@/lib/store";
 import { getJson, sendJson } from "@/lib/fetcher";
 import { useI18n } from "@/lib/i18n";
@@ -77,7 +78,11 @@ export default function BookPage() {
   }
 
   return (
-    <div className="pt-24 md:pt-32">
+    <>
+      {/* Mobile gets the step-by-step wizard; desktop keeps the rich layout. */}
+      <div className="lg:hidden pt-20"><MobileBookingWizard /></div>
+
+      <div className="hidden lg:block pt-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between gap-4">
           <div>
@@ -231,7 +236,8 @@ export default function BookPage() {
       {/* 360° / AR viewer */}
       <Table360 table={show360 ? selected ?? null : null} onClose={() => setShow360(false)}
         onBook={() => { setShow360(false); confirm(); }} />
-    </div>
+      </div>
+    </>
   );
 }
 
