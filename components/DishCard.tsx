@@ -7,6 +7,9 @@ import type { Dish } from "@/lib/types";
 import { useFavorites } from "@/lib/favorites";
 import { useMounted } from "@/lib/useMounted";
 
+/** Guaranteed-working image used if a dish photo fails to load. */
+const DISH_FALLBACK = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=70";
+
 export default function DishCard({ dish }: { dish: Dish }) {
   const ids = useFavorites((s) => s.ids);
   const toggle = useFavorites((s) => s.toggle);
@@ -21,6 +24,7 @@ export default function DishCard({ dish }: { dish: Dish }) {
       <div className="relative aspect-[4/3] overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={dish.image} alt={dish.name} loading="lazy" decoding="async"
+             onError={(e) => { const t = e.currentTarget; if (t.src !== DISH_FALLBACK) t.src = DISH_FALLBACK; }}
              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[600ms] ease-out" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         {/* hover view chip */}

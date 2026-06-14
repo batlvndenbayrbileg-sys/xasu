@@ -234,6 +234,8 @@ const CATEGORY: Record<string, { mn: string; en: string }> = {
   Seasonal: { mn: "Улирлын", en: "Seasonal" },
   Appetizers: { mn: "Зууш", en: "Appetizers" },
   Main: { mn: "Үндсэн хоол", en: "Main courses" },
+  Drinks: { mn: "Ундаа", en: "Drinks" },
+  Snacks: { mn: "Зууш ундаа", en: "Snacks" },
   Desserts: { mn: "Амттан", en: "Desserts" },
 };
 

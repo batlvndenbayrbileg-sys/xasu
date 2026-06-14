@@ -16,6 +16,12 @@ const INGREDIENTS = [
   { emoji: "🌿", label: "Herb Blend" },
 ];
 const ALLERGENS = ["Dairy", "Gluten", "Nuts", "Shellfish", "Egg"];
+/** Guaranteed-working image used if a dish photo fails to load. */
+const DISH_FALLBACK = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=70";
+const onImgError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const t = e.currentTarget;
+  if (t.src !== DISH_FALLBACK) t.src = DISH_FALLBACK;
+};
 
 export default function DishDetail({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -41,7 +47,7 @@ export default function DishDetail({ params }: { params: { id: string } }) {
           {/* image */}
           <div className="relative rounded-3xl overflow-hidden lg:sticky lg:top-28 aspect-[4/3] lg:aspect-square shadow-card">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={dish.image} alt={dish.name} decoding="async" className="w-full h-full object-cover" />
+            <img src={dish.image} alt={dish.name} decoding="async" onError={onImgError} className="w-full h-full object-cover" />
             <button onClick={() => toggle(dish.id)}
               className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/85 backdrop-blur grid place-items-center">
               <Heart size={20} className={clsx(liked ? "fill-accent text-accent" : "text-ink")} />
@@ -105,7 +111,7 @@ export default function DishDetail({ params }: { params: { id: string } }) {
                 className="group rounded-2xl overflow-hidden bg-white border border-line shadow-card hover:shadow-lg transition">
                 <div className="aspect-[4/3] overflow-hidden">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={p.image} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={p.image} alt={p.name} loading="lazy" decoding="async" onError={onImgError} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
                 <div className="p-4 flex items-center justify-between">
                   <h4 className="font-semibold text-[15px]">{p.name}</h4>

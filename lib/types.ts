@@ -1,4 +1,4 @@
-export type Category = "Specials" | "Seasonal" | "Appetizers" | "Main" | "Desserts";
+export type Category = "Specials" | "Seasonal" | "Appetizers" | "Main" | "Desserts" | "Drinks" | "Snacks";
 
 export interface Dish {
   id: string;

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import type { Category } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
 
-const cats: Category[] = ["Specials", "Seasonal", "Appetizers", "Main", "Desserts"];
+const cats: Category[] = ["Specials", "Seasonal", "Appetizers", "Main", "Drinks", "Snacks", "Desserts"];
 
 export default function CategoryTabs({ value, onChange }: { value: Category; onChange: (c: Category) => void }) {
   const { tCat } = useI18n();
