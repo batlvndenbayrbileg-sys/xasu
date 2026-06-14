@@ -20,6 +20,7 @@ import {
   HeroButton,
   HeroImage,
 } from "@/components/ui/animated-video-on-scroll";
+import { useMediaQuery } from "@/lib/useMediaQuery";
 import { DISHES } from "@/lib/data";
 import type { Category } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
@@ -138,34 +139,35 @@ export default function HomePage() {
 }
 
 function RestaurantReveal() {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+  // Mobile gets a simple reveal — sticky + clip-path is unreliable on
+  // iOS Safari (URL bar resize repaints make clip-path snap to end state).
+  // Desktop keeps the full cinematic scroll-driven version.
+  return isDesktop ? <RestaurantRevealDesktop /> : <RestaurantRevealMobile />;
+}
+
+function RestaurantRevealDesktop() {
   const { t } = useI18n();
   const titleLines = t("home.experienceTitle").split("\n");
   return (
     <section className="mt-24">
-      {/* Shorter section on mobile so the sticky scroll-animation finishes
-          quickly and never feels stuck. Desktop gets the full cinematic length. */}
-      <ContainerScroll className="h-[160vh] md:h-[260vh]">
+      <ContainerScroll className="h-[260vh]">
         <ContainerSticky
           style={{
             background:
               "radial-gradient(60% 60% at 50% 18%, #2a1a0e 0%, #1a1208 35%, #0c0805 75%, #050302 100%)",
           }}
-          className="overflow-hidden px-4 sm:px-6 py-12 md:py-16 text-white flex flex-col items-center justify-center"
+          className="overflow-hidden px-6 py-16 text-white flex flex-col items-center justify-center"
         >
           <ContainerAnimated className="space-y-3 text-center max-w-3xl">
             <p className="text-accent font-semibold text-[13px] tracking-wide uppercase">{t("home.experienceKicker")}</p>
-            <h2 className="font-display text-[34px] md:text-[60px] font-bold leading-[1.05] tracking-tight">
+            <h2 className="font-display text-[60px] font-bold leading-[1.05] tracking-tight">
               {titleLines.map((l, i) => (<span key={i} className="block">{l}</span>))}
             </h2>
-            <p className="mx-auto max-w-[48ch] text-white/70 text-[14px] md:text-[16px] pt-2">
-              {t("home.experienceSub")}
-            </p>
+            <p className="mx-auto max-w-[48ch] text-white/70 text-[16px] pt-2">{t("home.experienceSub")}</p>
           </ContainerAnimated>
 
-          {/* Aspect ratio is closer to square on mobile so the inset clip-path
-              expands as a balanced shape (not a stretched ellipse → wide bar);
-              becomes cinematic 16:10 on desktop. */}
-          <ContainerInset className="my-6 md:my-8 w-full max-w-5xl aspect-[4/3] md:aspect-[16/10]">
+          <ContainerInset className="my-8 w-full max-w-5xl aspect-[16/10]">
             <HeroImage
               src="/restaurant-hall.png"
               alt="GourmetGrove dining hall"
@@ -173,12 +175,7 @@ function RestaurantReveal() {
             />
           </ContainerInset>
 
-          <ContainerAnimated
-            transition={{ delay: 0.4 }}
-            outputRange={[-120, 0]}
-            inputRange={[0, 0.7]}
-            className="mx-auto w-fit"
-          >
+          <ContainerAnimated transition={{ delay: 0.4 }} outputRange={[-120, 0]} inputRange={[0, 0.7]} className="mx-auto w-fit">
             <Link href="/book">
               <HeroButton>
                 <UtensilsCrossed size={16} className="mr-2 text-white" />
@@ -188,6 +185,61 @@ function RestaurantReveal() {
           </ContainerAnimated>
         </ContainerSticky>
       </ContainerScroll>
+    </section>
+  );
+}
+
+function RestaurantRevealMobile() {
+  const { t } = useI18n();
+  const titleLines = t("home.experienceTitle").split("\n");
+  return (
+    <section className="mt-24">
+      <div
+        className="relative overflow-hidden px-4 py-14 text-white"
+        style={{
+          background:
+            "radial-gradient(70% 60% at 50% 15%, #2a1a0e 0%, #1a1208 40%, #0c0805 80%, #050302 100%)",
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="space-y-3 text-center max-w-md mx-auto"
+        >
+          <p className="text-accent font-semibold text-[13px] tracking-wide uppercase">{t("home.experienceKicker")}</p>
+          <h2 className="font-display text-[34px] font-bold leading-[1.05] tracking-tight">
+            {titleLines.map((l, i) => (<span key={i} className="block">{l}</span>))}
+          </h2>
+          <p className="mx-auto max-w-[42ch] text-white/70 text-[14px] pt-2">{t("home.experienceSub")}</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="my-7 mx-auto w-full max-w-md aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/restaurant-hall.png" alt="GourmetGrove dining hall" className="w-full h-full object-cover object-center" />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-center"
+        >
+          <Link href="/book"
+            className="inline-flex items-center gap-2 rounded-full border border-accent bg-accent/10 px-6 py-3 text-white font-semibold shadow-[0px_4px_24px_rgba(255,106,26,0.55)] hover:bg-accent transition-colors">
+            <UtensilsCrossed size={16} className="text-white" />
+            {t("home.orderFood")}
+          </Link>
+        </motion.div>
+      </div>
     </section>
   );
 }
