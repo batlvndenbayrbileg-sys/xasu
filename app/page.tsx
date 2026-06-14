@@ -10,6 +10,7 @@ import DishMarquee from "@/components/DishMarquee";
 import PhoShowcase from "@/components/PhoShowcase";
 import EventCarousel from "@/components/EventCarousel";
 import Testimonials from "@/components/Testimonials";
+import FinalCTA from "@/components/FinalCTA";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
 import { FlowButton } from "@/components/ui/flow-button";
@@ -119,20 +120,8 @@ export default function HomePage() {
       {/* TESTIMONIALS */}
       <Testimonials />
 
-      {/* CTA */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-24">
-        <Reveal>
-          <div className="relative overflow-hidden rounded-3xl bg-ink text-white px-8 md:px-16 py-14 md:py-20">
-            <div className="relative z-10 max-w-xl">
-              <h2 className="font-display text-[30px] md:text-[40px] font-bold leading-tight">{t("home.ctaTitle")}</h2>
-              <p className="text-white/75 mt-3">{t("home.ctaSub")}</p>
-              <div className="mt-7"><FlowButton text={t("home.bookNow")} href="/book" variant="light" /></div>
-            </div>
-            <motion.div animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ repeat: Infinity, duration: 6 }}
-              className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-accent/30 blur-3xl" />
-          </div>
-        </Reveal>
-      </section>
+      {/* FINAL CTA — Your table is waiting */}
+      <FinalCTA />
     </>
   );
 }

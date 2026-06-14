@@ -41,21 +41,13 @@ export default function Footer() {
   }
 
   return (
-    <footer className="relative mt-24 pb-24 md:pb-14 overflow-hidden">
-      {/* soft ambient glow */}
-      <div className="pointer-events-none absolute inset-x-0 top-10 -z-10 flex justify-center">
-        <div className="w-[480px] h-[480px] rounded-full bg-accent/10 blur-3xl" />
-      </div>
-
+    <footer className="relative mt-24 pb-24 md:pb-14">
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
-          {/* logo bubble */}
-          <div className="relative mb-6">
-            <div className="absolute inset-0 rounded-full bg-accent/20 blur-xl" />
-            <div className="relative rounded-full bg-white border border-line shadow-card px-6 py-5 grid place-items-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="GourmetGrove" className="h-12 w-auto" />
-            </div>
+          {/* logo */}
+          <div className="mb-6 rounded-full bg-white border border-line shadow-card px-6 py-5 grid place-items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="GourmetGrove" className="h-12 w-auto" />
           </div>
 
           <p className="text-muted text-[13px] mt-1 max-w-sm">{t("footer.tagline")}</p>

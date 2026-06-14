@@ -94,6 +94,13 @@ const DICT = {
   "home.ctaTitle": { mn: "Таны ширээ хүлээж байна.", en: "Your table is waiting." },
   "home.ctaSub": { mn: "Нэг минутаас бага хугацаанд захиал — танхим, цаг, яг суудлаа сонго.", en: "Reserve in under a minute — choose your zone, time, and exact seat." },
   "home.bookNow": { mn: "Одоо захиалах", en: "Book now" },
+  "home.ctaLive": { mn: "Шууд", en: "Live" },
+  "home.ctaOpen": { mn: "Нээлттэй", en: "Open now" },
+  "home.ctaSeats": { mn: "Өнөө орой сул", en: "Free tonight" },
+  "home.ctaWait": { mn: "Хүлээх дундаж", en: "Avg wait" },
+  "home.ctaMin": { mn: "минут", en: "min" },
+  "home.ctaCall": { mn: "Утсаар захиалах", en: "Call to reserve" },
+  "home.ctaUntil": { mn: "23:00 хүртэл", en: "until 23:00" },
 
   // menu
   "menu.kicker": { mn: "Судлах", en: "Explore" },
