@@ -1,16 +1,17 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Star, ChevronRight, UtensilsCrossed, CalendarRange, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, Star, ChevronRight, UtensilsCrossed, CalendarRange } from "lucide-react";
 import CategoryTabs from "@/components/CategoryTabs";
 import DishCard from "@/components/DishCard";
 import DishMarquee from "@/components/DishMarquee";
 import FloatingDishes from "@/components/FloatingDishes";
 import PhoShowcase from "@/components/PhoShowcase";
 import Testimonials from "@/components/Testimonials";
-import { Reveal, Stagger, StaggerItem, CountUp } from "@/components/Reveal";
+import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
+import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
 import { DISHES } from "@/lib/data";
 import type { Category } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
@@ -22,74 +23,49 @@ export default function HomePage() {
   const featured = DISHES.filter((d) => d.category === "Specials").slice(0, 8);
   const grid = dishes.length ? dishes : featured;
 
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const imgY = useTransform(scrollYProgress, [0, 1], ["0%", "28%"]);
-  const imgScale = useTransform(scrollYProgress, [0, 1], [1.05, 1.18]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 90]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  // Curated dish photos for the hero marquee — varied across categories.
+  const heroImages = useMemo(() => {
+    const picks = [
+      ...DISHES.filter((d) => d.category === "Specials"),
+      ...DISHES.filter((d) => d.category === "Main"),
+      ...DISHES.filter((d) => d.category === "Seasonal"),
+      ...DISHES.filter((d) => d.category === "Desserts"),
+    ];
+    // de-dupe images, take 14
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const d of picks) {
+      if (!seen.has(d.image)) { seen.add(d.image); out.push(d.image); }
+      if (out.length >= 14) break;
+    }
+    return out;
+  }, []);
 
-  const heroLines = t("home.heroTitle").split("\n");
+  const heroTitle = t("home.heroTitle");
+  const titleNode = (
+    <>
+      {heroTitle.split("\n").map((line, i) => (
+        <span key={i} className="block">{line}</span>
+      ))}
+    </>
+  );
 
   return (
     <>
-      {/* HERO */}
-      <section ref={heroRef} className="relative min-h-[92vh] md:min-h-screen flex items-center overflow-hidden">
-        <motion.div style={{ y: imgY, scale: imgScale }} className="absolute inset-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=2000&q=80"
-            alt="" className="w-full h-full object-cover" />
-        </motion.div>
-        <div className="absolute inset-0 hero-overlay" />
-
-        <motion.div style={{ y: contentY, opacity: contentOpacity }}
-          className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full pt-28 pb-16">
-          <div className="max-w-2xl text-white">
-            <motion.span initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-              className="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/15 rounded-full px-4 py-1.5 text-[13px] font-medium">
-              <Sparkles size={14} className="text-accent" /> {t("home.badge")}
-            </motion.span>
-            <h1 className="font-display text-[40px] sm:text-[56px] lg:text-[68px] font-bold leading-[1.05] mt-6">
-              {heroLines.map((l, i) => (
-                <motion.span key={i} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 + i * 0.12, ease: [0.16, 1, 0.3, 1], duration: 0.7 }} className="block">
-                  {l}
-                </motion.span>
-              ))}
-            </h1>
-            <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
-              className="text-[15px] sm:text-[17px] text-white/85 mt-5 max-w-xl leading-relaxed">{t("home.heroSub")}</motion.p>
-            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
-              className="flex flex-wrap gap-3 mt-8">
-              <Link href="/book" className="inline-flex items-center gap-2 bg-accent text-white font-semibold px-7 py-3.5 rounded-full shadow-glow hover:bg-accent-soft hover:gap-3 transition-all">
-                {t("home.reserve")} <ArrowRight size={18} />
-              </Link>
-              <Link href="/menu" className="inline-flex items-center gap-2 bg-white/10 backdrop-blur border border-white/25 text-white font-semibold px-7 py-3.5 rounded-full hover:bg-white/20 transition">
-                {t("home.explore")}
-              </Link>
-            </motion.div>
-
-            <div className="flex items-center gap-8 mt-12">
-              <Stat value={<CountUp to={4.9} />} label={t("home.statRating")} />
-              <div className="w-px h-10 bg-white/20" />
-              <Stat value={<CountUp to={12} suffix="k+" />} label={t("home.statGuests")} />
-              <div className="w-px h-10 bg-white/20" />
-              <Stat value="#1" label={t("home.statCity")} />
-            </div>
-          </div>
-        </motion.div>
-
-        {/* scroll cue */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-1 text-white/60">
-          <span className="w-5 h-8 rounded-full border border-white/40 grid place-items-start p-1">
-            <motion.span animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.6 }} className="w-1 h-1.5 rounded-full bg-white/70" />
-          </span>
-        </motion.div>
-      </section>
+      {/* HERO — animated marquee */}
+      <AnimatedMarqueeHero
+        tagline={t("home.badge")}
+        title={titleNode}
+        description={t("home.heroSub")}
+        ctaText={t("home.reserve")}
+        ctaHref="/book"
+        secondaryCtaText={t("home.explore")}
+        secondaryCtaHref="/menu"
+        images={heroImages}
+      />
 
       {/* VALUE STRIP */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-10 relative z-10">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16 relative z-10">
         <Stagger className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StaggerItem><Feature icon={<UtensilsCrossed />} title={t("home.feat1Title")} desc={t("home.feat1Desc")} /></StaggerItem>
           <StaggerItem><Feature icon={<CalendarRange />} title={t("home.feat2Title")} desc={t("home.feat2Desc")} /></StaggerItem>
@@ -158,15 +134,6 @@ export default function HomePage() {
         </Reveal>
       </section>
     </>
-  );
-}
-
-function Stat({ value, label }: { value: React.ReactNode; label: string }) {
-  return (
-    <div>
-      <div className="font-display text-[26px] font-bold">{value}</div>
-      <div className="text-[12px] text-white/70">{label}</div>
-    </div>
   );
 }
 
