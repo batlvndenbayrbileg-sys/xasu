@@ -10,6 +10,10 @@ export default function MobileNav() {
   const router = useRouter();
   const { t } = useI18n();
 
+  // Hide on flows that have their own bottom action bar (e.g. booking wizard,
+  // payment screen) — otherwise the nav covers their primary CTA on mobile.
+  if (pathname.startsWith("/book") || pathname.startsWith("/pay")) return null;
+
   const items = [
     { href: "/", icon: Home, label: t("nav.home") },
     { href: "/menu", icon: BookOpen, label: t("nav.menu") },
