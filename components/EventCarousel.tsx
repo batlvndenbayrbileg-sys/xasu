@@ -77,6 +77,9 @@ export default function EventCarousel() {
   const { t } = useI18n();
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const activeRef = useRef(active);
+  activeRef.current = active;
 
   // Compute the active card by tracking which card is closest to the viewport center.
   useEffect(() => {
@@ -110,6 +113,25 @@ export default function EventCarousel() {
   const prev = () => scrollTo(Math.max(0, active - 1));
   const next = () => scrollTo(Math.min(EVENTS.length - 1, active + 1));
 
+  // Auto-advance every 3s, looping back to the first card at the end.
+  // Pauses while the user hovers / touches the carousel so it never fights them.
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(() => {
+      const nextIdx = (activeRef.current + 1) % EVENTS.length;
+      scrollTo(nextIdx);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [paused]);
+
+  // Pause autoplay if the tab is hidden — saves CPU and avoids a sudden jump
+  // when the user returns.
+  useEffect(() => {
+    const onVis = () => setPaused(document.hidden);
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
+
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-24">
       <div className="flex items-end justify-between gap-4">
@@ -140,6 +162,10 @@ export default function EventCarousel() {
         <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#faf8f5] to-transparent z-10" />
 
         <div ref={trackRef}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onTouchStart={() => setPaused(true)}
+          onTouchEnd={() => setPaused(false)}
           className="flex gap-5 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth px-4 sm:px-6 lg:px-8 pb-4">
           {EVENTS.map((ev, i) => (
             <motion.article
