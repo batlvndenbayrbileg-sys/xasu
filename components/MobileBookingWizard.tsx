@@ -184,7 +184,7 @@ export default function MobileBookingWizard() {
                   {loadingTables ? (
                     <div className="h-[360px] grid place-items-center text-neutral-400"><Loader2 className="animate-spin" /></div>
                   ) : (
-                    <FloorPlan tables={tables} zone={zone} />
+                    <FloorPlan tables={tables} zone={zone} hideInspector />
                   )}
                 </div>
 

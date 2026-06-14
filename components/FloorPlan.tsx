@@ -14,13 +14,16 @@ import { useI18n } from "@/lib/i18n";
  * alcove, garden beds, …), realistic tabletops with soft drop-shadows and
  * floating status pills. SVG-only — scales crisply, fast to render.
  */
-export default function FloorPlan({ tables, zone }: { tables: RestaurantTable[]; zone: Zone }) {
+export default function FloorPlan({ tables, zone, hideInspector = false }: { tables: RestaurantTable[]; zone: Zone; hideInspector?: boolean }) {
   const { selectedTableId, selectTable } = useBookingStore();
   const { t, tZone } = useI18n();
   const [hoverId, setHoverId] = useState<string | null>(null);
 
   const inspectId = hoverId ?? selectedTableId;
-  const inspected = useMemo(() => tables.find((x) => x.id === inspectId) ?? null, [tables, inspectId]);
+  const inspected = useMemo(
+    () => (hideInspector ? null : tables.find((x) => x.id === inspectId) ?? null),
+    [tables, inspectId, hideInspector],
+  );
 
   return (
     <div className="relative rounded-2xl overflow-hidden border border-line bg-[#0c1018] shadow-inner">

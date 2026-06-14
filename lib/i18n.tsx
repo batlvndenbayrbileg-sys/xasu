@@ -68,6 +68,7 @@ const DICT = {
   "pho.s4Sub": { mn: "Гар аргаар тэнцвэржүүлсэн ногоо, чинжүү", en: "Hand-balanced herbs and chili" },
   "home.tBadge": { mn: "Сэтгэгдэл", en: "Testimonials" },
   "home.guest": { mn: "Үйлчлүүлэгч", en: "Guest" },
+  "profile.shortcuts": { mn: "Хурдан холбоос", en: "Quick links" },
   "home.tTitle": { mn: "Манай зочид юу гэж хэлдэг вэ", en: "What our guests say" },
   "home.tSub": { mn: "Биднийг сонгосон зочдынхоо чин сэтгэлийн сэтгэгдлийг уншаарай.", en: "Real words from the guests who dine with us." },
   "home.events": { mn: "Удахгүй болох арга хэмжээ", en: "Upcoming events" },

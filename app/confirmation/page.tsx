@@ -27,8 +27,9 @@ function ConfirmationInner() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getJson<Reservation[]>("/api/reservations").then(({ data }) => {
-      setRes((data ?? []).find((x) => x.id === id) ?? null);
+    if (!id) { setLoading(false); return; }
+    getJson<Reservation>(`/api/reservations/${id}`).then(({ data }) => {
+      setRes(data ?? null);
     }).finally(() => setLoading(false));
   }, [id]);
 

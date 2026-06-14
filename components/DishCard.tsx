@@ -6,6 +6,7 @@ import clsx from "clsx";
 import type { Dish } from "@/lib/types";
 import { useFavorites } from "@/lib/favorites";
 import { useMounted } from "@/lib/useMounted";
+import { formatDishPrice } from "@/lib/payments";
 
 /** Guaranteed-working image used if a dish photo fails to load. */
 const DISH_FALLBACK = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=70";
@@ -46,7 +47,7 @@ export default function DishCard({ dish }: { dish: Dish }) {
       <div className="px-4 pt-3 pb-4">
         <div className="flex items-start justify-between gap-2">
           <h4 className="text-[15px] md:text-[16px] font-semibold leading-tight">{dish.name}</h4>
-          <span className="text-[15px] font-bold text-accent whitespace-nowrap">${dish.price.toFixed(2)}</span>
+          <span className="text-[15px] font-bold text-accent whitespace-nowrap">{formatDishPrice(dish.price)}</span>
         </div>
         <p className="text-[12.5px] text-muted line-clamp-2 mt-1.5">{dish.description}</p>
       </div>

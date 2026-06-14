@@ -21,7 +21,6 @@ export default function SiteHeader() {
   const { t } = useI18n();
   const favCount = useFavorites((s) => s.ids.length);
   const mounted = useMounted();
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
   const links = [
@@ -31,16 +30,11 @@ export default function SiteHeader() {
     { href: "/orders", label: t("nav.myBookings") },
   ];
 
-  const overHero = pathname === "/";
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
   useEffect(() => { setOpen(false); }, [pathname]);
 
-  const solid = !overHero || scrolled || pathname.startsWith("/login");
+  // Header is always solid — the hero is now cream/light so a transparent
+  // white-text overlay would be invisible.
+  const solid = true;
 
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 

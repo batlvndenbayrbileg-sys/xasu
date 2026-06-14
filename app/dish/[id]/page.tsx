@@ -6,6 +6,7 @@ import { ChevronLeft, Heart, Flame, Timer, Star, ArrowRight, ShoppingBasket } fr
 import clsx from "clsx";
 import { DISHES } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
+import { formatDishPrice } from "@/lib/payments";
 import { useFavorites } from "@/lib/favorites";
 import { useMounted } from "@/lib/useMounted";
 
@@ -68,7 +69,7 @@ export default function DishDetail({ params }: { params: { id: string } }) {
             <div className="flex items-center gap-6 mt-6">
               <span className="inline-flex items-center gap-2 text-[14px]"><Flame size={16} className="text-accent" /> {dish.calories} {t("dish.kcal")}</span>
               <span className="inline-flex items-center gap-2 text-[14px]"><Timer size={16} className="text-accent" /> {dish.prepMinutes} {t("dish.min")}</span>
-              <span className="text-[22px] font-bold text-accent ml-auto">${dish.price.toFixed(2)}</span>
+              <span className="text-[22px] font-bold text-accent ml-auto">{formatDishPrice(dish.price)}</span>
             </div>
 
             <h3 className="font-display text-[22px] font-bold mt-9 mb-3">{t("dish.ingredients")}</h3>
@@ -115,7 +116,7 @@ export default function DishDetail({ params }: { params: { id: string } }) {
                 </div>
                 <div className="p-4 flex items-center justify-between">
                   <h4 className="font-semibold text-[15px]">{p.name}</h4>
-                  <span className="font-bold text-accent">${p.price.toFixed(2)}</span>
+                  <span className="font-bold text-accent">{formatDishPrice(p.price)}</span>
                 </div>
               </Link>
             ))}

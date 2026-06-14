@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { LogOut, ChevronRight, Heart, Receipt, Bell, HelpCircle, Loader2, User as UserIcon } from "lucide-react";
+import { LogOut, ChevronRight, Heart, Receipt, CalendarRange, BookOpen, Loader2, User as UserIcon } from "lucide-react";
 import { useSession } from "@/lib/useSession";
 import { useI18n } from "@/lib/i18n";
 
@@ -47,9 +47,9 @@ export default function ProfilePage() {
             <Item icon={<Receipt size={18} />} label={t("profile.myBookings")} onClick={() => router.push("/orders")} />
             <Item icon={<Heart size={18} />} label={t("profile.favourites")} onClick={() => router.push("/favorites")} />
           </Section>
-          <Section title={t("profile.settings")}>
-            <Item icon={<Bell size={18} />} label={t("profile.notifications")} />
-            <Item icon={<HelpCircle size={18} />} label={t("profile.help")} />
+          <Section title={t("profile.shortcuts")}>
+            <Item icon={<CalendarRange size={18} />} label={t("nav.reserve")} onClick={() => router.push("/book")} />
+            <Item icon={<BookOpen size={18} />} label={t("nav.menu")} onClick={() => router.push("/menu")} />
           </Section>
         </div>
 
