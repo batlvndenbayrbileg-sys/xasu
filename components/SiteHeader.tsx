@@ -12,7 +12,6 @@ import { useFavorites } from "@/lib/favorites";
 import { useMounted } from "@/lib/useMounted";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
-import Logo from "@/components/Logo";
 
 export default function SiteHeader() {
   const pathname = usePathname();
@@ -43,12 +42,9 @@ export default function SiteHeader() {
       <header className={clsx("fixed top-0 inset-x-0 z-50 transition-all duration-300",
         solid ? "bg-white/80 backdrop-blur-md border-b border-line shadow-[0_1px_20px_rgba(0,0,0,.04)]" : "bg-transparent")}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
-            <span className="w-10 h-10 rounded-xl grid place-items-center shadow-glow bg-accent text-white group-hover:scale-105 transition-transform">
-              <Logo size={24} />
-            </span>
-            <span className={clsx("font-display text-[20px] md:text-[22px] font-bold tracking-tight",
-              solid ? "text-ink" : "text-white")}>GourmetGrove</span>
+          <Link href="/" aria-label="Home" className="flex items-center shrink-0 group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="GourmetGrove" className="h-10 md:h-12 w-auto group-hover:scale-[1.03] transition-transform" />
           </Link>
 
           {/* desktop nav with animated underline */}
@@ -112,10 +108,8 @@ export default function SiteHeader() {
               onClick={(e) => e.stopPropagation()}
               className="absolute right-0 top-0 bottom-0 w-[80%] max-w-xs bg-white shadow-2xl flex flex-col p-6">
               <div className="flex items-center justify-between">
-                <span className="flex items-center gap-2 font-display text-[20px] font-bold">
-                  <span className="w-8 h-8 rounded-lg grid place-items-center bg-accent text-white"><Logo size={20} /></span>
-                  GourmetGrove
-                </span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/logo.png" alt="GourmetGrove" className="h-10 w-auto" />
                 <button onClick={() => setOpen(false)} className="w-9 h-9 rounded-full bg-neutral-100 grid place-items-center"><X size={18} /></button>
               </div>
 

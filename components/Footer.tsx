@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Facebook, Instagram, Twitter, Youtube, Send, Check } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import Logo from "@/components/Logo";
 import { toast } from "@/lib/toast";
 
 /**
@@ -51,15 +50,14 @@ export default function Footer() {
       <div className="mx-auto max-w-3xl px-4 sm:px-6">
         <div className="flex flex-col items-center text-center">
           {/* logo bubble */}
-          <div className="relative mb-7">
+          <div className="relative mb-6">
             <div className="absolute inset-0 rounded-full bg-accent/20 blur-xl" />
-            <div className="relative rounded-full bg-white border border-line shadow-card p-7 grid place-items-center text-accent">
-              <Logo size={34} />
+            <div className="relative rounded-full bg-white border border-line shadow-card px-6 py-5 grid place-items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="GourmetGrove" className="h-12 w-auto" />
             </div>
           </div>
 
-          {/* brand line */}
-          <p className="font-display text-[20px] md:text-[22px] font-bold text-ink">GourmetGrove</p>
           <p className="text-muted text-[13px] mt-1 max-w-sm">{t("footer.tagline")}</p>
 
           {/* nav */}
