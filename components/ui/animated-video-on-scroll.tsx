@@ -48,7 +48,9 @@ export const ContainerScroll: React.FC<React.HTMLAttributes<HTMLDivElement>> = (
   });
   return (
     <ContainerScrollContext.Provider value={{ scrollYProgress }}>
-      <div ref={scrollRef} className={cn("relative min-h-svh w-full", className)} {...props}>
+      {/* min-h-screen instead of svh — svh changes when the mobile address bar
+          shows/hides which makes scroll-progress jitter and "stick". */}
+      <div ref={scrollRef} className={cn("relative min-h-screen w-full", className)} {...props}>
         {children}
       </div>
     </ContainerScrollContext.Provider>
@@ -83,7 +85,7 @@ ContainerAnimated.displayName = "ContainerAnimated";
 
 export const ContainerSticky = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("sticky left-0 top-0 min-h-svh w-full", className)} {...props} />
+    <div ref={ref} className={cn("sticky left-0 top-0 h-screen w-full", className)} {...props} />
   ),
 );
 ContainerSticky.displayName = "ContainerSticky";
@@ -108,7 +110,8 @@ export const HeroVideo = React.forwardRef<HTMLVideoElement, HTMLMotionProps<"vid
 );
 HeroVideo.displayName = "HeroVideo";
 
-/** Image variant of HeroVideo — same scroll-driven scale, but for static photos. */
+/** Image variant of HeroVideo — same scroll-driven scale, but for static photos.
+ *  Caller should supply width/height via className (e.g. `w-full h-full object-cover`). */
 export const HeroImage = React.forwardRef<HTMLImageElement, HTMLMotionProps<"img">>(
   ({ style, className, transition, ...props }, ref) => {
     const { scrollYProgress } = useContainerScrollContext();
@@ -117,7 +120,7 @@ export const HeroImage = React.forwardRef<HTMLImageElement, HTMLMotionProps<"img
       // eslint-disable-next-line jsx-a11y/alt-text
       <motion.img
         ref={ref}
-        className={cn("relative z-10 size-auto max-h-full max-w-full object-cover", className)}
+        className={cn("relative z-10 block", className)}
         style={{ scale, ...style }}
         {...props}
       />
