@@ -55,9 +55,15 @@ export async function POST(req: Request) {
     }
 
     // Live/test mode: create a hosted checkout session and send the user there.
+    // Build the return URL from the *actual* request origin so the user always
+    // lands back on the same domain they paid from (keeps the session cookie
+    // valid). Falls back to SITE_URL if headers are unavailable.
+    const proto = req.headers.get("x-forwarded-proto") ?? "https";
+    const host = req.headers.get("host");
+    const origin = host ? `${proto}://${host}` : SITE_URL;
     const session = await createCheckoutSession({
       paymentIntentId: intent.id,
-      successUrl: `${SITE_URL}/pay?r=${reservation.id}&return=1`,
+      successUrl: `${origin}/pay?r=${reservation.id}&return=1`,
       idempotencyKey: `sess_${reservation.id}`,
     });
 
