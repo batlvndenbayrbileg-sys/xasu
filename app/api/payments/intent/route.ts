@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { createPaymentIntent, confirmPaymentIntent, getPaymentIntent, WIRE_LIVE } from "@/lib/wire";
-import { DEFAULT_OPERATOR } from "@/lib/payments";
+import { createPaymentIntent, createCheckoutSession, getPaymentIntent, WIRE_LIVE } from "@/lib/wire";
 import { SITE_URL } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -36,24 +35,29 @@ export async function POST(req: Request) {
       await prisma.reservation.update({ where: { id: reservation.id }, data: { paymentIntentId: intent.id } });
     }
 
-    // Dispatch to the operator (QPay) to obtain the QR next_action.
-    if (intent.status === "new" || intent.status === "requires_payment_method") {
-      intent = await confirmPaymentIntent(intent.id, {
-        operator: DEFAULT_OPERATOR,
-        return_url: `${SITE_URL}/pay?r=${reservation.id}`,
-        idempotencyKey: `confirm_${reservation.id}`,
+    if (intent.status === "succeeded") {
+      if (reservation.paymentStatus !== "paid") {
+        await prisma.reservation.update({ where: { id: reservation.id }, data: { paymentStatus: "paid" } });
+      }
+      return NextResponse.json({ data: { status: "succeeded", paymentStatus: "paid", amount: reservation.amount, mock: !WIRE_LIVE } });
+    }
+
+    // Mock mode: inline QR, no hosted checkout exists.
+    if (!WIRE_LIVE) {
+      return NextResponse.json({
+        data: { id: intent.id, status: intent.status, amount: reservation.amount, nextAction: intent.next_action ?? null, mock: true },
       });
     }
 
+    // Live/test mode: create a hosted checkout session and send the user there.
+    const session = await createCheckoutSession({
+      paymentIntentId: intent.id,
+      successUrl: `${SITE_URL}/pay?r=${reservation.id}&return=1`,
+      idempotencyKey: `sess_${reservation.id}`,
+    });
+
     return NextResponse.json({
-      data: {
-        id: intent.id,
-        status: intent.status,
-        amount: reservation.amount,
-        nextAction: intent.next_action ?? null,
-        clientSecret: intent.client_secret ?? null,
-        mock: !WIRE_LIVE,
-      },
+      data: { id: intent.id, status: intent.status, amount: reservation.amount, checkoutUrl: session.url, mock: false },
     });
   } catch (e: any) {
     return NextResponse.json({ error: e?.message ?? "Payment error" }, { status: 502 });

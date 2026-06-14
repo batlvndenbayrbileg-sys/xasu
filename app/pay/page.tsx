@@ -22,7 +22,9 @@ type Phase = "loading" | "action" | "waiting" | "success" | "error";
 function PayInner() {
   const router = useRouter();
   const { t } = useI18n();
-  const reservationId = useSearchParams().get("r") ?? "";
+  const searchParams = useSearchParams();
+  const reservationId = searchParams.get("r") ?? "";
+  const isReturn = searchParams.get("return") === "1";
   const [phase, setPhase] = useState<Phase>("loading");
   const [amount, setAmount] = useState(0);
   const [qr, setQr] = useState<string | null>(null);
@@ -43,12 +45,18 @@ function PayInner() {
     if (status === 401) { router.push(`/login?redirect=/pay?r=${reservationId}`); return; }
     if (!ok || !data) { setPhase("error"); setError(error ?? "Payment error"); return; }
     setAmount(data.amount); setMock(!!data.mock);
-    setQr(data.nextAction?.qr_image ?? null);
     if (data.status === "succeeded") return finish();
+    if (data.checkoutUrl) { window.location.href = data.checkoutUrl; return; }
+    setQr(data.nextAction?.qr_image ?? null);
     setPhase("waiting");
   }, [reservationId, router, finish]);
 
-  useEffect(() => { start(); /* eslint-disable-next-line */ }, []);
+  useEffect(() => {
+    // Returning from hosted checkout: don't create a new session, just poll status.
+    if (isReturn) { setPhase("waiting"); return; }
+    start();
+    /* eslint-disable-next-line */
+  }, []);
 
   // poll for completion
   useEffect(() => {
