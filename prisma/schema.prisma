@@ -1,0 +1,59 @@
+// GourmetGrove — Prisma schema (PostgreSQL — required for Vercel/serverless).
+//
+// Local dev: point DATABASE_URL at a Neon/Supabase/Postgres instance and run
+//   `npm run db:setup` (prisma db push + scripts/init-db.mjs).
+// SQLite is NOT used anymore because Vercel's filesystem is ephemeral/read-only.
+//
+// Double-booking is prevented by a PARTIAL UNIQUE INDEX on confirmed
+// reservations (scripts/init-db.mjs) — atomic at the DB level under concurrency.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // optional: unpooled URL for migrations (Neon/Supabase)
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  passwordHash String
+  createdAt    DateTime      @default(now())
+  sessions     Session[]
+  reservations Reservation[]
+}
+
+model Session {
+  token     String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Reservation {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tableId   String
+  zone      String
+  partySize Int
+  date      String // YYYY-MM-DD
+  time      String // HH:mm
+  status    String   @default("CONFIRMED") // CONFIRMED | CANCELLED
+  createdAt DateTime @default(now())
+
+  // ── Deposit payment (Wire) ──
+  amount          Int     @default(0) // deposit in MNT (integer)
+  paymentStatus   String  @default("unpaid") // unpaid | paid | refunded | failed
+  paymentIntentId String?
+
+  @@index([userId])
+  @@index([tableId, date, time])
+}

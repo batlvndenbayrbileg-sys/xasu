@@ -1,0 +1,25 @@
+# Local Postgres for development.
+#   docker compose up -d
+#   npm run db:migrate     # applies prisma/migrations
+#   npm run dev
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: gourmetgrove-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gourmet
+      POSTGRES_PASSWORD: gourmet
+      POSTGRES_DB: gourmetgrove
+    ports:
+      - "5432:5432"
+    volumes:
+      - gourmet_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gourmet -d gourmetgrove"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  gourmet_pg:
