@@ -53,7 +53,11 @@ function PayInner() {
 
   useEffect(() => {
     // Returning from hosted checkout: don't create a new session, just poll status.
-    if (isReturn) { setPhase("waiting"); return; }
+    if (isReturn) {
+      if (!reservationId) { setPhase("error"); setError("Missing reservation"); return; }
+      setPhase("waiting");
+      return;
+    }
     start();
     /* eslint-disable-next-line */
   }, []);
@@ -61,18 +65,39 @@ function PayInner() {
   // poll for completion
   useEffect(() => {
     if (phase !== "waiting") return;
-    pollRef.current = setInterval(async () => {
-      const { data } = await getJson<any>(`/api/payments/intent?reservationId=${reservationId}`);
-      if (data?.status === "succeeded" || data?.paymentStatus === "paid") {
+    let cancelled = false;
+    let attempts = 0;
+    const MAX_ATTEMPTS = 40; // ~100s
+
+    const check = async () => {
+      attempts++;
+      const { ok, status, data } = await getJson<any>(`/api/payments/intent?reservationId=${reservationId}`);
+      if (cancelled) return;
+      if (status === 401) {
+        if (pollRef.current) clearInterval(pollRef.current);
+        router.push(`/login?redirect=${encodeURIComponent(`/pay?r=${reservationId}${isReturn ? "&return=1" : ""}`)}`);
+        return;
+      }
+      if (ok && data?.status === "succeeded") {
         if (pollRef.current) clearInterval(pollRef.current);
         finish();
-      } else if (data?.status === "canceled") {
+        return;
+      }
+      if (ok && data?.status === "canceled") {
+        if (pollRef.current) clearInterval(pollRef.current);
+        setPhase("error"); setError(t("pay.failed"));
+        return;
+      }
+      if (attempts >= MAX_ATTEMPTS) {
         if (pollRef.current) clearInterval(pollRef.current);
         setPhase("error"); setError(t("pay.failed"));
       }
-    }, 2500);
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
-  }, [phase, reservationId, finish, t]);
+    };
+
+    check();
+    pollRef.current = setInterval(check, 2500);
+    return () => { cancelled = true; if (pollRef.current) clearInterval(pollRef.current); };
+  }, [phase, reservationId, finish, isReturn, router, t]);
 
   return (
     <div className="pt-24 md:pt-32 min-h-[80vh]">
