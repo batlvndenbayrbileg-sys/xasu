@@ -7,11 +7,18 @@ import { ArrowRight, Star, ChevronRight, UtensilsCrossed, CalendarRange } from "
 import CategoryTabs from "@/components/CategoryTabs";
 import DishCard from "@/components/DishCard";
 import DishMarquee from "@/components/DishMarquee";
-import FloatingDishes from "@/components/FloatingDishes";
 import PhoShowcase from "@/components/PhoShowcase";
 import Testimonials from "@/components/Testimonials";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
+import {
+  ContainerAnimated,
+  ContainerInset,
+  ContainerScroll,
+  ContainerSticky,
+  HeroButton,
+  HeroImage,
+} from "@/components/ui/animated-video-on-scroll";
 import { DISHES } from "@/lib/data";
 import type { Category } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
@@ -97,8 +104,8 @@ export default function HomePage() {
       {/* MOVING DISHES MARQUEE */}
       <DishMarquee />
 
-      {/* FLOATING DISHES SHOWCASE */}
-      <FloatingDishes />
+      {/* RESTAURANT AMBIENCE — scroll-driven cinematic reveal */}
+      <RestaurantReveal />
 
       {/* PHO PINNED SHOWCASE — spin-in dishes */}
       <PhoShowcase />
@@ -134,6 +141,55 @@ export default function HomePage() {
         </Reveal>
       </section>
     </>
+  );
+}
+
+function RestaurantReveal() {
+  const { t } = useI18n();
+  const titleLines = t("home.experienceTitle").split("\n");
+  return (
+    <section className="mt-24">
+      <ContainerScroll className="h-[280vh]">
+        <ContainerSticky
+          style={{
+            background:
+              "radial-gradient(60% 60% at 50% 18%, #2a1a0e 0%, #1a1208 35%, #0c0805 75%, #050302 100%)",
+          }}
+          className="overflow-hidden px-6 py-16 text-white"
+        >
+          <ContainerAnimated className="space-y-3 text-center">
+            <p className="text-accent font-semibold text-[13px] tracking-wide uppercase">{t("home.experienceKicker")}</p>
+            <h2 className="font-display text-[40px] md:text-[64px] font-bold leading-[1.05] tracking-tight">
+              {titleLines.map((l, i) => (<span key={i} className="block">{l}</span>))}
+            </h2>
+            <p className="mx-auto max-w-[48ch] text-white/70 text-[15px] md:text-[16px] pt-2">
+              {t("home.experienceSub")}
+            </p>
+          </ContainerAnimated>
+
+          <ContainerInset className="max-h-[520px] w-auto py-8">
+            <HeroImage
+              src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=2000&q=80"
+              alt="GourmetGrove dining room"
+            />
+          </ContainerInset>
+
+          <ContainerAnimated
+            transition={{ delay: 0.4 }}
+            outputRange={[-120, 0]}
+            inputRange={[0, 0.7]}
+            className="mx-auto mt-2 w-fit"
+          >
+            <Link href="/book">
+              <HeroButton>
+                <UtensilsCrossed size={16} className="mr-2 text-white" />
+                {t("home.orderFood")}
+              </HeroButton>
+            </Link>
+          </ContainerAnimated>
+        </ContainerSticky>
+      </ContainerScroll>
+    </section>
   );
 }
 
