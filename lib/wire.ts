@@ -48,33 +48,18 @@ class WireError extends Error {
   constructor(message: string, status: number) { super(message); this.status = status; }
 }
 
-/** Encode params Stripe-style: nested objects -> key[subkey], arrays -> key[]. */
-function toForm(params: Record<string, any>): URLSearchParams {
-  const usp = new URLSearchParams();
-  for (const [key, value] of Object.entries(params)) {
-    if (value === undefined || value === null) continue;
-    if (Array.isArray(value)) {
-      for (const item of value) usp.append(`${key}[]`, String(item));
-    } else if (typeof value === "object") {
-      for (const [k, v] of Object.entries(value)) usp.append(`${key}[${k}]`, String(v));
-    } else {
-      usp.append(key, String(value));
-    }
-  }
-  return usp;
-}
-
-async function wireFetch<T>(path: string, init: RequestInit & { idempotencyKey?: string } = {}): Promise<T> {
+async function wireFetch<T>(path: string, init: Omit<RequestInit, "body"> & { idempotencyKey?: string; json?: Record<string, any> } = {}): Promise<T> {
   const headers: Record<string, string> = { Authorization: `Bearer ${KEY}` };
-  if (init.body instanceof URLSearchParams) headers["Content-Type"] = "application/x-www-form-urlencoded";
+  let body: string | undefined;
+  if (init.json) { headers["Content-Type"] = "application/json"; body = JSON.stringify(init.json); }
   if (init.idempotencyKey) headers["Idempotency-Key"] = init.idempotencyKey;
-  const res = await fetch(`${BASE}${path}`, { ...init, headers, cache: "no-store" });
-  const body = await res.json().catch(() => null);
+  const res = await fetch(`${BASE}${path}`, { ...init, body, headers, cache: "no-store" });
+  const resBody = await res.json().catch(() => null);
   if (!res.ok) {
-    const msg = body?.error?.message || `Wire request failed (${res.status})`;
+    const msg = resBody?.error?.message || `Wire request failed (${res.status})`;
     throw new WireError(msg, res.status);
   }
-  return body as T;
+  return resBody as T;
 }
 
 /* ───────────────── mock mode ───────────────── */
@@ -112,11 +97,11 @@ export async function createPaymentIntent(opts: {
   return wireFetch<PaymentIntent>("/payment_intents", {
     method: "POST",
     idempotencyKey: opts.idempotencyKey,
-    body: toForm({
+    json: {
       amount: opts.amount, currency: "MNT",
       allowed_operators: ALLOWED_OPERATORS,
       metadata: opts.metadata ?? {},
-    }),
+    },
   });
 }
 
@@ -142,7 +127,7 @@ export async function createCheckoutSession(opts: {
   return wireFetch<CheckoutSession>("/checkout/sessions", {
     method: "POST",
     idempotencyKey: opts.idempotencyKey,
-    body: toForm({ payment_intent: opts.paymentIntentId, success_url: opts.successUrl }),
+    json: { payment_intent: opts.paymentIntentId, success_url: opts.successUrl },
   });
 }
 
