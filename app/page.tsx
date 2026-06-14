@@ -8,6 +8,7 @@ import CategoryTabs from "@/components/CategoryTabs";
 import DishCard from "@/components/DishCard";
 import DishMarquee from "@/components/DishMarquee";
 import PhoShowcase from "@/components/PhoShowcase";
+import EventCarousel from "@/components/EventCarousel";
 import Testimonials from "@/components/Testimonials";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
@@ -110,16 +111,8 @@ export default function HomePage() {
       {/* PHO PINNED SHOWCASE — spin-in dishes */}
       <PhoShowcase />
 
-      {/* EVENTS */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-24">
-        <Reveal><h2 className="font-display text-[32px] md:text-[42px] font-bold">{t("home.events")}</h2></Reveal>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-          <Reveal dir="right"><EventCard img="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=70"
-            title={t("home.event1Title")} date="Feb 16, 2024 · 7:00 PM" badge={t("home.event1Badge")} desc={t("home.event1Desc")} cta={t("home.reserveSpot")} /></Reveal>
-          <Reveal dir="left"><EventCard img="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=900&q=70"
-            title={t("home.event2Title")} date="Feb 23, 2024 · 8:00 PM" desc={t("home.event2Desc")} cta={t("home.reserveSpot")} /></Reveal>
-        </div>
-      </section>
+      {/* EVENTS — swipeable carousel */}
+      <EventCarousel />
 
       {/* TESTIMONIALS */}
       <Testimonials />
@@ -205,22 +198,3 @@ function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; 
   );
 }
 
-function EventCard({ img, title, date, desc, badge, cta }: { img: string; title: string; date: string; desc: string; badge?: string; cta: string }) {
-  return (
-    <article className="group flex gap-4 md:gap-6 bg-white rounded-2xl border border-line shadow-card overflow-hidden p-3 md:p-4 hover:shadow-xl transition h-full">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={img} alt="" loading="lazy" decoding="async" className="w-28 md:w-44 h-28 md:h-40 rounded-xl object-cover flex-none group-hover:scale-105 transition-transform duration-500" />
-      <div className="flex-1 min-w-0 py-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <h3 className="font-semibold text-[17px] md:text-[19px]">{title}</h3>
-          {badge && <span className="bg-accent/10 text-accent text-[11px] font-semibold px-2 py-0.5 rounded-full">{badge}</span>}
-        </div>
-        <p className="text-[12px] text-accent font-medium mt-1">{date}</p>
-        <p className="text-[13px] text-muted mt-2 line-clamp-2 md:line-clamp-3">{desc}</p>
-        <Link href="/book" className="inline-flex items-center gap-1 text-[13px] font-semibold mt-3 hover:text-accent transition">
-          {cta} <ChevronRight size={15} />
-        </Link>
-      </div>
-    </article>
-  );
-}
