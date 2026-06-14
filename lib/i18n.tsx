@@ -162,6 +162,8 @@ const DICT = {
   "book.tableOk": { mn: "Энэ ширээг сонгох", en: "Choose this table" },
   "book.view360": { mn: "360° орчин", en: "360° view" },
   "book.tapTable": { mn: "Танхимаас ширээ дээр дар", en: "Tap a table on the plan" },
+  "book.couldNotReserve": { mn: "Захиалга үүсгэж чадсангүй", en: "Could not create the reservation" },
+  "book.bookedToast": { mn: "Ширээ амжилттай захиалагдлаа!", en: "Table booked successfully!" },
   "step.details": { mn: "Мэдээлэл", en: "Details" },
   "step.table": { mn: "Ширээ", en: "Table" },
   "step.confirm": { mn: "Баталгаа", en: "Confirm" },

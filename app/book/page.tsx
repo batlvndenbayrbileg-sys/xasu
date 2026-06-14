@@ -29,7 +29,7 @@ function nextDays(count: number) {
 export default function BookPage() {
   const router = useRouter();
   const { t, tZone } = useI18n();
-  const { zone, setZone, selectedTableId, selectTable, partySize, setPartySize, date, setDate, time, setTime } = useBookingStore();
+  const { zone, setZone, selectedTableId, selectTable, partySize, setPartySize, date, setDate, time, setTime, reset } = useBookingStore();
 
   const days = useMemo(() => nextDays(14), []);
   const [tables, setTables] = useState<RestaurantTable[]>([]);
@@ -67,7 +67,9 @@ export default function BookPage() {
     const { ok, status, data, error } = await sendJson<any>("/api/reservations", "POST", { tableId: selected.id, partySize, date, time });
     setSubmitting(false);
     if (status === 401) { router.push("/login?redirect=/book"); return; }
-    if (!ok) { setError(error ?? "Could not reserve"); toast.error(error ?? "Could not reserve"); return; }
+    if (!ok) { setError(error ?? t("book.couldNotReserve")); toast.error(error ?? t("book.couldNotReserve")); return; }
+    toast.success(t("book.bookedToast"));
+    reset();
     router.push(`/pay?r=${data.id}`);
   }
 

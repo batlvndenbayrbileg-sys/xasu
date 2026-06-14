@@ -40,7 +40,7 @@ type Step = 1 | 2 | 3 | 4;
 export default function MobileBookingWizard() {
   const router = useRouter();
   const { t, tZone } = useI18n();
-  const { zone, setZone, selectedTableId, selectTable, partySize, setPartySize, date, setDate, time, setTime } = useBookingStore();
+  const { zone, setZone, selectedTableId, selectTable, partySize, setPartySize, date, setDate, time, setTime, reset } = useBookingStore();
 
   const days = useMemo(() => nextDays(14), []);
   const [step, setStep] = useState<Step>(1);
@@ -92,10 +92,11 @@ export default function MobileBookingWizard() {
     });
     setSubmitting(false);
     if (status === 401) { router.push("/login?redirect=/book"); return; }
-    if (!ok) { toast.error(error ?? "Could not reserve"); return; }
-    setShowFoodDialog(true);
-    // Stash id so the dialog button can route to /pay
+    if (!ok) { toast.error(error ?? t("book.couldNotReserve")); return; }
+    toast.success(t("book.bookedToast"));
     sessionStorage.setItem("__lastReservation", data.id);
+    reset(); // clear store so a new visit starts fresh
+    setShowFoodDialog(true);
   }
 
   function goPay() {
