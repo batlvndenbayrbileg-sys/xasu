@@ -162,7 +162,7 @@ function RestaurantReveal() {
 
           <ContainerInset className="max-h-[520px] w-auto py-8">
             <HeroImage
-              src="https://images.unsplash.com/photo-1592861956120-e524fc739696?auto=format&fit=crop&w=2000&q=80"
+              src="/restaurant-hall.png"
               alt="GourmetGrove dining hall"
             />
           </ContainerInset>
