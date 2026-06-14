@@ -44,7 +44,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
   return (
     <section
       className={cn(
-        "relative w-full min-h-[92vh] md:min-h-screen overflow-hidden bg-[#faf8f5] flex flex-col items-center justify-center text-center px-4 pt-24 md:pt-28",
+        "relative w-full min-h-[78vh] md:min-h-[88vh] overflow-hidden bg-[#faf8f5] flex flex-col items-center text-center px-4 pt-20 md:pt-24",
         className
       )}
     >
@@ -52,7 +52,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
       <div className="pointer-events-none absolute -top-32 left-1/4 w-[520px] h-[520px] rounded-full bg-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute top-1/3 right-0 w-[420px] h-[420px] rounded-full bg-amber-200/20 blur-3xl" />
 
-      <div className="z-10 flex flex-col items-center max-w-4xl">
+      <div className="z-10 flex flex-col items-center max-w-4xl mt-4 md:mt-8">
         {/* Tagline pill */}
         <motion.div
           initial="hidden"
@@ -121,16 +121,16 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
       </div>
 
       {/* Animated image marquee */}
-      <div className="absolute bottom-0 left-0 w-full h-[34%] md:h-[40%] [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_80%,transparent)] pointer-events-none">
+      <div className="absolute bottom-0 left-0 w-full h-[28%] md:h-[34%] [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_80%,transparent)] pointer-events-none">
         <motion.div
-          className="flex gap-4 md:gap-5 px-4 h-full items-end pb-6"
+          className="flex gap-4 md:gap-5 px-4 h-full items-end pb-4"
           animate={{ x: ["0%", "-50%"] }}
           transition={{ ease: "linear", duration: 50, repeat: Infinity }}
         >
           {loop.map((src, index) => (
             <div
               key={index}
-              className="relative aspect-[3/4] h-44 md:h-64 flex-shrink-0 rounded-2xl overflow-hidden shadow-xl ring-1 ring-black/5"
+              className="relative aspect-[3/4] h-36 md:h-52 flex-shrink-0 rounded-2xl overflow-hidden shadow-xl ring-1 ring-black/5"
               style={{ rotate: `${index % 2 === 0 ? -3 : 4}deg` }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
