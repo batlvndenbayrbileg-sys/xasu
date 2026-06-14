@@ -162,9 +162,10 @@ function RestaurantReveal() {
             </p>
           </ContainerAnimated>
 
-          {/* Fixed aspect frame so the image always shows the whole dining hall,
-              not just the ceiling. w-full + aspect ensures consistent layout. */}
-          <ContainerInset className="my-6 md:my-8 w-full max-w-5xl aspect-[16/10]">
+          {/* Aspect ratio is closer to square on mobile so the inset clip-path
+              expands as a balanced shape (not a stretched ellipse → wide bar);
+              becomes cinematic 16:10 on desktop. */}
+          <ContainerInset className="my-6 md:my-8 w-full max-w-5xl aspect-[4/3] md:aspect-[16/10]">
             <HeroImage
               src="/restaurant-hall.png"
               alt="GourmetGrove dining hall"
