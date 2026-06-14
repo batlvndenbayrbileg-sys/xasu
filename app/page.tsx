@@ -12,6 +12,7 @@ import EventCarousel from "@/components/EventCarousel";
 import Testimonials from "@/components/Testimonials";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
 import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
+import { FlowButton } from "@/components/ui/flow-button";
 import {
   ContainerAnimated,
   ContainerInset,
@@ -125,9 +126,7 @@ export default function HomePage() {
             <div className="relative z-10 max-w-xl">
               <h2 className="font-display text-[30px] md:text-[40px] font-bold leading-tight">{t("home.ctaTitle")}</h2>
               <p className="text-white/75 mt-3">{t("home.ctaSub")}</p>
-              <Link href="/book" className="inline-flex items-center gap-2 bg-accent text-white font-semibold px-7 py-3.5 rounded-full shadow-glow mt-7 hover:bg-accent-soft hover:gap-3 transition-all">
-                {t("home.bookNow")} <ArrowRight size={18} />
-              </Link>
+              <div className="mt-7"><FlowButton text={t("home.bookNow")} href="/book" variant="light" /></div>
             </div>
             <motion.div animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ repeat: Infinity, duration: 6 }}
               className="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-accent/30 blur-3xl" />
@@ -176,12 +175,7 @@ function RestaurantRevealDesktop() {
           </ContainerInset>
 
           <ContainerAnimated transition={{ delay: 0.4 }} outputRange={[-120, 0]} inputRange={[0, 0.7]} className="mx-auto w-fit">
-            <Link href="/book">
-              <HeroButton>
-                <UtensilsCrossed size={16} className="mr-2 text-white" />
-                {t("home.orderFood")}
-              </HeroButton>
-            </Link>
+            <FlowButton text={t("home.orderFood")} href="/book" variant="light" />
           </ContainerAnimated>
         </ContainerSticky>
       </ContainerScroll>
@@ -240,11 +234,7 @@ function RestaurantRevealMobile() {
           </motion.div>
 
           <motion.div style={{ opacity }} className="text-center">
-            <Link href="/book"
-              className="inline-flex items-center gap-2 rounded-full border border-accent bg-accent/10 px-6 py-3 text-white font-semibold shadow-[0px_4px_24px_rgba(255,106,26,0.55)] hover:bg-accent transition-colors">
-              <UtensilsCrossed size={16} className="text-white" />
-              {t("home.orderFood")}
-            </Link>
+            <FlowButton text={t("home.orderFood")} href="/book" variant="light" />
           </motion.div>
         </div>
       </div>

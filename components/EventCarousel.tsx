@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, CalendarRange, Clock, Sparkles } from "lucide-re
 import clsx from "clsx";
 import type { DictKey } from "@/lib/i18n";
 import { useI18n } from "@/lib/i18n";
+import { FlowButton } from "@/components/ui/flow-button";
 
 interface Event {
   titleKey: DictKey;
@@ -209,10 +210,7 @@ export default function EventCarousel() {
                 </div>
                 <p className="text-[14px] text-neutral-600 mt-2.5 line-clamp-3">{t(ev.descKey)}</p>
                 <div className="mt-4 flex items-center gap-3">
-                  <Link href="/book"
-                    className="inline-flex items-center gap-1.5 bg-accent text-white font-semibold px-5 py-2.5 rounded-full hover:bg-accent-soft transition shadow-glow text-[13px]">
-                    {t("home.reserveSpot")} <ArrowRight size={14} />
-                  </Link>
+                  <FlowButton text={t("home.reserveSpot")} href="/book" variant="accent" />
                   <Link href="/menu"
                     className="text-[13px] font-semibold text-ink hover:text-accent transition">
                     {t("home.eventDetails")}

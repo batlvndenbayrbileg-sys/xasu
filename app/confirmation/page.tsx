@@ -9,6 +9,7 @@ import { TABLES } from "@/lib/data";
 import { getJson } from "@/lib/fetcher";
 import { useI18n } from "@/lib/i18n";
 import type { Reservation } from "@/lib/types";
+import { FlowButton } from "@/components/ui/flow-button";
 
 export default function ConfirmationPage() {
   return (
@@ -70,11 +71,9 @@ function ConfirmationInner() {
           <p className="mt-10 text-neutral-400">{t("conf.notFound")}</p>
         )}
 
-        <div className="mt-8 flex flex-col sm:flex-row gap-3">
-          <button onClick={() => router.push("/orders")}
-            className="flex-1 bg-accent text-white font-semibold py-4 rounded-full shadow-glow hover:bg-accent-soft transition">{t("conf.viewBookings")}</button>
-          <button onClick={() => router.push("/")}
-            className="flex-1 bg-white border border-line text-ink font-semibold py-4 rounded-full hover:bg-neutral-50 transition">{t("conf.backHome")}</button>
+        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
+          <FlowButton text={t("conf.viewBookings")} onClick={() => router.push("/orders")} variant="accent" />
+          <FlowButton text={t("conf.backHome")} onClick={() => router.push("/")} variant="dark" />
         </div>
       </div>
     </div>

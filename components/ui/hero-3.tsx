@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { FlowButton } from "@/components/ui/flow-button";
 
 interface AnimatedMarqueeHeroProps {
   tagline: string;
@@ -99,24 +100,8 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
           transition={{ delay: 0.6 }}
           className="mt-8 flex flex-wrap items-center justify-center gap-3"
         >
-          <motion.a
-            href={ctaHref}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            className="px-8 py-3.5 rounded-full bg-accent text-white font-semibold shadow-glow transition-colors hover:bg-accent-soft focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-          >
-            {ctaText}
-          </motion.a>
-          {secondaryCtaText && (
-            <motion.a
-              href={secondaryCtaHref}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="px-8 py-3.5 rounded-full bg-white border border-line text-ink font-semibold hover:border-accent hover:text-accent transition"
-            >
-              {secondaryCtaText}
-            </motion.a>
-          )}
+          <FlowButton text={ctaText} href={ctaHref} variant="accent" />
+          {secondaryCtaText && <FlowButton text={secondaryCtaText} href={secondaryCtaHref} variant="dark" />}
         </motion.div>
       </div>
 
