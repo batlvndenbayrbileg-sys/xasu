@@ -2,33 +2,16 @@
 
 import Link from "next/link";
 import { DISHES } from "@/lib/data";
-import { useI18n } from "@/lib/i18n";
 
 /** Two infinite rows of circular dish photos scrolling in opposite directions. */
 export default function DishMarquee() {
-  const { t } = useI18n();
   const rowA = DISHES.slice(0, 10);
   const rowB = [...DISHES].slice(8).concat(DISHES.slice(0, 4)).reverse();
 
   return (
     <section className="mt-24 overflow-hidden">
-      {/* text band */}
-      <div className="marquee-host bg-ink text-white py-3 -rotate-1 scale-105">
-        <div className="flex w-max animate-marquee-l">
-          {[0, 1].map((k) => (
-            <div key={k} className="flex items-center gap-6 pr-6 shrink-0">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <span key={i} className="font-display text-[18px] md:text-[22px] whitespace-nowrap flex items-center gap-6">
-                  {t("home.marquee")} <span className="text-accent">✦</span>
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* dish photo rows */}
-      <div className="mt-8 space-y-5">
+      <div className="space-y-5">
         <Row dishes={rowA} dir="l" />
         <Row dishes={rowB} dir="r" />
       </div>
