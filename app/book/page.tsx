@@ -136,10 +136,10 @@ export default function BookPage() {
               <div className="flex items-center justify-between px-1 pb-3 flex-wrap gap-2">
                 <h3 className="font-semibold text-[15px]">{tZone(zone)} — {t("book.floorplan")}</h3>
                 <div className="flex gap-3 text-[11px] text-muted">
-                  <span className="inline-flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-ink inline-block" /> {t("book.available")}</span>
-                  <span className="inline-flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-accent inline-block" /> {t("book.selected")}</span>
+                  <span className="inline-flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-emerald-400 inline-block" /> {t("book.available")}</span>
                   <span className="inline-flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-amber-400 inline-block" /> {t("book.reserved")}</span>
-                  <span className="inline-flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-neutral-300 inline-block" /> {t("book.taken")}</span>
+                  <span className="inline-flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-red-500 inline-block" /> {t("book.taken")}</span>
+                  <span className="inline-flex items-center gap-1"><i className="w-2 h-2 rounded-full bg-accent inline-block" /> {t("book.selected")}</span>
                 </div>
               </div>
               {loading ? (
