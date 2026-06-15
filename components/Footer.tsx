@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Facebook, Instagram, Twitter, Youtube, Send, Check } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { toast } from "@/lib/toast";
@@ -14,8 +15,11 @@ import { toast } from "@/lib/toast";
  */
 export default function Footer() {
   const { t } = useI18n();
+  const pathname = usePathname();
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
+
+  if (pathname.startsWith("/admin")) return null;
 
   const links = [
     { href: "/", label: t("nav.home") },

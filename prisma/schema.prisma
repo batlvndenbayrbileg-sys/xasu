@@ -22,9 +22,18 @@ model User {
   name         String
   email        String        @unique
   passwordHash String
+  role         String        @default("USER") // USER | ADMIN
   createdAt    DateTime      @default(now())
   sessions     Session[]
   reservations Reservation[]
+}
+
+/// Admin-controlled per-dish availability override. Dishes are otherwise
+/// defined statically in `lib/data.ts`; this table only stores overrides.
+model DishAvailability {
+  dishId    String   @id
+  available Boolean  @default(true)
+  updatedAt DateTime @updatedAt
 }
 
 model Session {

@@ -31,6 +31,9 @@ export default function SiteHeader() {
 
   useEffect(() => { setOpen(false); }, [pathname]);
 
+  // Admin uses its own shell.
+  if (pathname.startsWith("/admin")) return null;
+
   // Header is always solid — the hero is now cream/light so a transparent
   // white-text overlay would be invisible.
   const solid = true;
