@@ -23,10 +23,10 @@ export default function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   const links = [
-    { href: "/", label: t("nav.home") },
-    { href: "/menu", label: t("nav.menu") },
-    { href: "/book", label: t("nav.reserve") },
-    { href: "/orders", label: t("nav.myBookings") },
+    { href: "/#platform", label: t("saas.navPlatform") },
+    { href: "/#pricing", label: t("saas.navPricing") },
+    { href: "/#customers", label: t("saas.navCustomers") },
+    { href: "/book", label: t("saas.navDemo") },
   ];
 
   useEffect(() => { setOpen(false); }, [pathname]);
@@ -85,8 +85,8 @@ export default function SiteHeader() {
                 {user.name.charAt(0).toUpperCase()}
               </button>
             ) : (
-              <Link href="/book" className="hidden md:inline bg-accent text-white text-[14px] font-semibold px-5 py-2.5 rounded-full shadow-glow hover:bg-accent-soft transition">
-                {t("nav.reserveBtn")}
+              <Link href="/#contact" className="hidden md:inline bg-accent text-white text-[14px] font-semibold px-5 py-2.5 rounded-full shadow-glow hover:bg-accent-soft transition">
+                {t("saas.bookDemo")}
               </Link>
             )}
 

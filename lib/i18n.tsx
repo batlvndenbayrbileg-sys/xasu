@@ -69,6 +69,58 @@ const DICT = {
   "home.tBadge": { mn: "Сэтгэгдэл", en: "Testimonials" },
   "home.guest": { mn: "Үйлчлүүлэгч", en: "Guest" },
   "profile.shortcuts": { mn: "Хурдан холбоос", en: "Quick links" },
+
+  /* ───────── SaaS landing (Xasu — Restaurant OS) ───────── */
+  "saas.kicker": { mn: "AI-аар ажилладаг ресторан платформ", en: "AI-powered restaurant platform" },
+  "saas.heroTitle": { mn: "Орчин үеийн ресторанд\nзориулсан үйлдлийн систем", en: "The operating system for\nmodern restaurants" },
+  "saas.heroSub": { mn: "Захиалга, ширээ, төлбөр, харилцагч, ажилчид, шинжилгээ — бүгдийг нэг платформоос. Дундаж ресторан 6 сард 28%+ орлогын өсөлт авдаг.", en: "Reservations, tables, payments, customers, staff, analytics — all on one platform. The average restaurant sees 28%+ revenue lift in 6 months." },
+  "saas.bookDemo": { mn: "Demo захиалах", en: "Book a demo" },
+  "saas.watchTour": { mn: "Product tour үзэх", en: "Watch product tour" },
+  "saas.trustedBy": { mn: "ИТГЭН АШИГЛАДАГ", en: "TRUSTED BY" },
+  /* Problem */
+  "saas.probKicker": { mn: "Асуудал", en: "The problem" },
+  "saas.probTitle": { mn: "Орчин үеийн ресторанд хэт олон систем", en: "Modern restaurants run on too many disconnected systems" },
+  "saas.probSub": { mn: "Захиалга нэг газар, төлбөр нөгөө газар, цэс гуравтаа, харилцагчийн түүх алга. Үр дүн — алдагдсан орлого.", en: "Bookings here, payments there, menu somewhere else, customer history nowhere. Result: lost revenue." },
+  /* Modules */
+  "saas.modKicker": { mn: "Платформ", en: "Platform" },
+  "saas.modTitle": { mn: "Нэг платформ. 12 модуль.", en: "One platform. 12 modules." },
+  "saas.modSub": { mn: "Ресторанд хэрэгтэй бүх зүйл нэг систем дотор, нэгдсэн өгөгдөлтэй.", en: "Everything a restaurant needs — in one system, on one shared data layer." },
+  /* Tables */
+  "saas.tableKicker": { mn: "Үндсэн боломж", en: "Flagship feature" },
+  "saas.tableTitle": { mn: "Бодит цагийн ширээний удирдлага", en: "Real-time table management" },
+  "saas.tableSub": { mn: "Танхимаа дэлгэцэн дээрээс нэг товчоор. Захиалсан, суусан, цэвэрлэгдэж буй ширээнүүдийг шууд харна.", en: "Run your floor from a single screen. See reserved, occupied, and cleaning tables update live." },
+  /* Journey */
+  "saas.journeyKicker": { mn: "Хэрэглэгчийн аялал", en: "Customer journey" },
+  "saas.journeyTitle": { mn: "Захиалснаас үнэнч зочин болтол", en: "From first booking to loyal regular" },
+  /* Dashboard */
+  "saas.dashKicker": { mn: "Менежерийн dashboard", en: "Manager dashboard" },
+  "saas.dashTitle": { mn: "Орлого, бөглөөсөл, тэнгийн харахад", en: "Revenue, occupancy, and forecast — at a glance" },
+  /* AI */
+  "saas.aiKicker": { mn: "AI боломж", en: "AI capabilities" },
+  "saas.aiTitle": { mn: "AI таны үйл ажиллагааг тооцоолоход тусална", en: "AI that runs the numbers for you" },
+  /* Mobile */
+  "saas.mobKicker": { mn: "Гар утасны апп", en: "Mobile apps" },
+  "saas.mobTitle": { mn: "Эзэн, менежер, зөөгч, зочин — бүгдэд апп", en: "Apps for owners, managers, servers, and guests" },
+  /* Case */
+  "saas.caseKicker": { mn: "Амжилтын түүх", en: "Case studies" },
+  "saas.caseTitle": { mn: "Бодит ресторан. Бодит үр дүн.", en: "Real restaurants. Real results." },
+  /* Trust */
+  "saas.trustKicker": { mn: "Enterprise-grade", en: "Enterprise-grade" },
+  "saas.trustTitle": { mn: "Найдвартай байдал. Аюулгүй байдал. Хяналт.", en: "Reliability. Security. Control." },
+  /* Pricing */
+  "saas.priceKicker": { mn: "Үнэ", en: "Pricing" },
+  "saas.priceTitle": { mn: "Ресторан бүрд тохирох төлөвлөгөө", en: "A plan for every restaurant" },
+  /* FAQ */
+  "saas.faqKicker": { mn: "Түгээмэл асуултууд", en: "FAQ" },
+  "saas.faqTitle": { mn: "Бид ийм асуултанд хариулдаг", en: "We get asked these often" },
+  /* Final */
+  "saas.finalTitle": { mn: "Рестораныхаа ирээдүйг өнөөдөр эхлүүл.", en: "Modernise your restaurant. Today." },
+  "saas.finalSub": { mn: "30 минутын demo дотор бид яаж 6 сард 28% орлогын өсөлтөд хүрэхийг үзүүлнэ.", en: "In a 30-minute demo we'll show you exactly how restaurants reach 28% revenue lift in 6 months." },
+  /* Nav */
+  "saas.navPlatform": { mn: "Платформ", en: "Platform" },
+  "saas.navPricing": { mn: "Үнэ", en: "Pricing" },
+  "saas.navCustomers": { mn: "Хэрэглэгчид", en: "Customers" },
+  "saas.navDemo": { mn: "Туршиж үзэх", en: "Live demo" },
   "home.tTitle": { mn: "Манай зочид юу гэж хэлдэг вэ", en: "What our guests say" },
   "home.tSub": { mn: "Биднийг сонгосон зочдынхоо чин сэтгэлийн сэтгэгдлийг уншаарай.", en: "Real words from the guests who dine with us." },
   "home.events": { mn: "Удахгүй болох арга хэмжээ", en: "Upcoming events" },
