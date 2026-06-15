@@ -47,7 +47,7 @@ export default function Footer() {
           {/* logo */}
           <div className="mb-6 rounded-full bg-white border border-line shadow-card px-6 py-5 grid place-items-center">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="GourmetGrove" className="h-12 w-auto" />
+            <img src="/logo.png" alt="Xasu" className="h-12 w-auto" />
           </div>
 
           <p className="text-muted text-[13px] mt-1 max-w-sm">{t("footer.tagline")}</p>
@@ -99,7 +99,7 @@ export default function Footer() {
 
           {/* copyright */}
           <p className="mt-5 text-[12px] text-muted">
-            © {new Date().getFullYear()} GourmetGrove. {t("footer.rights")}
+            © {new Date().getFullYear()} Xasu. {t("footer.rights")}
           </p>
         </div>
       </div>

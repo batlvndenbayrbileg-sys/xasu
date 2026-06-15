@@ -158,7 +158,7 @@ function RestaurantRevealDesktop() {
           <ContainerInset className="my-8 w-full max-w-5xl aspect-[16/10]">
             <HeroImage
               src="/restaurant-hall.png"
-              alt="GourmetGrove dining hall"
+              alt="Xasu dining hall"
               className="w-full h-full object-cover object-center"
             />
           </ContainerInset>
@@ -219,7 +219,7 @@ function RestaurantRevealMobile() {
             className="my-7 w-full max-w-md aspect-[4/3] overflow-hidden shadow-2xl ring-1 ring-white/10 mx-auto"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/restaurant-hall.png" alt="GourmetGrove dining hall" className="w-full h-full object-cover object-center" />
+            <img src="/restaurant-hall.png" alt="Xasu dining hall" className="w-full h-full object-cover object-center" />
           </motion.div>
 
           <motion.div style={{ opacity }} className="text-center">

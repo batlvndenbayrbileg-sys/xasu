@@ -1,4 +1,4 @@
-# Deploying GourmetGrove to Vercel
+# Deploying Xasu to Vercel
 
 ## 1. Database (required — SQLite won't work on Vercel)
 
@@ -19,7 +19,7 @@ npm run db:setup        # prisma db push + scripts/init-db.mjs (partial unique i
 ## 2. Push to GitHub & import to Vercel
 
 ```bash
-git init && git add -A && git commit -m "GourmetGrove"
+git init && git add -A && git commit -m "Xasu"
 # create a repo, then:
 git remote add origin <your-repo> && git push -u origin main
 ```

@@ -120,7 +120,7 @@ function PayInner() {
     <div className="pt-20 md:pt-32 min-h-[80vh] pb-12">
       <div className="mx-auto max-w-md px-4 sm:px-6 text-center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.png" alt="GourmetGrove" className="h-12 md:h-14 w-auto mx-auto mb-5" />
+        <img src="/logo.png" alt="Xasu" className="h-12 md:h-14 w-auto mx-auto mb-5" />
         <p className="text-accent font-semibold text-[13px] md:text-[14px] tracking-wide uppercase">{t("pay.step")}</p>
         <h1 className="font-display text-[28px] md:text-[40px] font-bold mt-1">{t("pay.title")}</h1>
         <p className="text-muted mt-2 text-[14px] md:text-[16px]">{t("pay.sub")}</p>

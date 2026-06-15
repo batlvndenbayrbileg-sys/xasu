@@ -20,20 +20,20 @@ import { SITE_URL } from "@/lib/site";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "GourmetGrove · Fine Dining & Reservations",
-    template: "%s · GourmetGrove",
+    default: "Xasu · Fine Dining & Reservations",
+    template: "%s · Xasu",
   },
-  description: "Reserve your table at GourmetGrove — seasonal tasting menus, an exclusive Valentine's experience, and a live interactive floorplan.",
-  applicationName: "GourmetGrove",
-  keywords: ["restaurant", "reservation", "fine dining", "GourmetGrove", "ширээ захиалга", "ресторан"],
+  description: "Reserve your table at Xasu — seasonal tasting menus, an exclusive Valentine's experience, and a live interactive floorplan.",
+  applicationName: "Xasu",
+  keywords: ["restaurant", "reservation", "fine dining", "Xasu", "ширээ захиалга", "ресторан"],
   openGraph: {
-    title: "GourmetGrove — Fine Dining & Reservations",
+    title: "Xasu — Fine Dining & Reservations",
     description: "Seasonal menus and a live interactive floorplan. Reserve your exact table.",
     type: "website",
     url: SITE_URL,
-    siteName: "GourmetGrove",
+    siteName: "Xasu",
   },
-  twitter: { card: "summary_large_image", title: "GourmetGrove", description: "Fine dining reservations" },
+  twitter: { card: "summary_large_image", title: "Xasu", description: "Fine dining reservations" },
   alternates: { canonical: "/" },
 };
 

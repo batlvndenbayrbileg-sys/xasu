@@ -32,7 +32,7 @@ const DICT = {
 
   // home
   "home.badge": { mn: "Гэгээн Валентины тусгай цэс — захиалга нээлттэй", en: "Valentine's exclusive menu — now booking" },
-  "home.heroTitle": { mn: "GourmetGrove-д\nхайраа тэмдэглэе", en: "Celebrate love at\nGourmetGrove" },
+  "home.heroTitle": { mn: "Xasu-д\nхайраа тэмдэглэе", en: "Celebrate love at\nXasu" },
   "home.heroSub": { mn: "Улирлын амтат цэс, шагналт дарсны сан, мөн та яг хаана суухаа сонгох боломжтой амьд интерактив танхимын зураг.", en: "Seasonal tasting menus, an award-winning cellar, and a live interactive floorplan so you can pick the exact table." },
   "home.reserve": { mn: "Ширээ захиалах", en: "Reserve a table" },
   "home.explore": { mn: "Цэс үзэх", en: "Explore menu" },
@@ -244,8 +244,8 @@ const DICT = {
   // login
   "login.welcomeBack": { mn: "Тавтай морил", en: "Welcome back" },
   "login.createAccount": { mn: "Бүртгэл үүсгэх", en: "Create account" },
-  "login.signinSub": { mn: "GourmetGrove-д үргэлжлүүлэхийн тулд нэвтэрнэ үү.", en: "Sign in to continue to GourmetGrove." },
-  "login.signupSub": { mn: "Хэдхэн секундэд GourmetGrove-д нэгдээрэй.", en: "Join GourmetGrove in a few seconds." },
+  "login.signinSub": { mn: "Xasu-д үргэлжлүүлэхийн тулд нэвтэрнэ үү.", en: "Sign in to continue to Xasu." },
+  "login.signupSub": { mn: "Хэдхэн секундэд Xasu-д нэгдээрэй.", en: "Join Xasu in a few seconds." },
   "login.signin": { mn: "Нэвтрэх", en: "Sign in" },
   "login.signup": { mn: "Бүртгүүлэх", en: "Sign up" },
   "login.fullName": { mn: "Бүтэн нэр", en: "Full name" },

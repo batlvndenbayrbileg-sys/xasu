@@ -1,4 +1,4 @@
-# GourmetGrove — Fine Dining & Reservations
+# Xasu — Fine Dining & Reservations
 
 A **responsive** restaurant website (not a phone mockup) built with **Next.js 14 (App Router) + TypeScript + Tailwind + Framer Motion + Zustand + Prisma/PostgreSQL**. Mobile-first, with a distinct, richer desktop layout.
 

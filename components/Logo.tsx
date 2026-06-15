@@ -1,4 +1,4 @@
-/** GourmetGrove mark — plate swirl with a spoon (outline) and fork (solid),
+/** Xasu mark — plate swirl with a spoon (outline) and fork (solid),
  *  recreated as inline SVG so it scales crisply and inherits currentColor. */
 export default function Logo({ className = "", size = 22 }: { className?: string; size?: number }) {
   return (

@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "GourmetGrove — Fine Dining & Reservations",
-    short_name: "GourmetGrove",
-    description: "Reserve your table at GourmetGrove — seasonal menus and a live interactive floorplan.",
+    name: "Xasu — Fine Dining & Reservations",
+    short_name: "Xasu",
+    description: "Reserve your table at Xasu — seasonal menus and a live interactive floorplan.",
     start_url: "/",
     display: "standalone",
     background_color: "#faf8f5",

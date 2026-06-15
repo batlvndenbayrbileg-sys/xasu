@@ -44,7 +44,7 @@ export default function SiteHeader() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between gap-4">
           <Link href="/" aria-label="Home" className="flex items-center shrink-0 group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="GourmetGrove" className="h-10 md:h-12 w-auto group-hover:scale-[1.03] transition-transform" />
+            <img src="/logo.png" alt="Xasu" className="h-10 md:h-12 w-auto group-hover:scale-[1.03] transition-transform" />
           </Link>
 
           {/* desktop nav with animated underline */}
@@ -109,7 +109,7 @@ export default function SiteHeader() {
               className="absolute right-0 top-0 bottom-0 w-[80%] max-w-xs bg-white shadow-2xl flex flex-col p-6">
               <div className="flex items-center justify-between">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo.png" alt="GourmetGrove" className="h-10 w-auto" />
+                <img src="/logo.png" alt="Xasu" className="h-10 w-auto" />
                 <button onClick={() => setOpen(false)} className="w-9 h-9 rounded-full bg-neutral-100 grid place-items-center"><X size={18} /></button>
               </div>
 
