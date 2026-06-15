@@ -20,20 +20,20 @@ import { SITE_URL } from "@/lib/site";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Xasu · The operating system for modern restaurants",
+    default: "Xasu · Fine Dining & Reservations",
     template: "%s · Xasu",
   },
-  description: "Reservations, tables, payments, customers, staff, analytics — all on one AI-powered platform. The average restaurant sees 28%+ revenue lift in 6 months.",
+  description: "Reserve your table at Xasu — seasonal tasting menus, an exclusive Valentine's experience, and a live interactive floorplan.",
   applicationName: "Xasu",
-  keywords: ["restaurant OS", "reservation software", "restaurant management", "table management", "POS", "Xasu", "ресторан", "захиалга"],
+  keywords: ["restaurant", "reservation", "fine dining", "Xasu", "ширээ захиалга", "ресторан"],
   openGraph: {
-    title: "Xasu — The operating system for modern restaurants",
-    description: "Manage reservations, tables, payments, CRM, loyalty and AI insights — from one platform.",
+    title: "Xasu — Fine Dining & Reservations",
+    description: "Seasonal menus and a live interactive floorplan. Reserve your exact table.",
     type: "website",
     url: SITE_URL,
     siteName: "Xasu",
   },
-  twitter: { card: "summary_large_image", title: "Xasu — Restaurant OS", description: "Manage your restaurant from one AI-powered platform." },
+  twitter: { card: "summary_large_image", title: "Xasu", description: "Fine dining reservations" },
   alternates: { canonical: "/" },
 };
 
