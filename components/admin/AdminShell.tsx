@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users } from "lucide-react";
+import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users, Calendar, Settings, Shield } from "lucide-react";
 import clsx from "clsx";
 import { sendJson } from "@/lib/fetcher";
 import type { PublicUser } from "@/lib/auth";
@@ -10,11 +10,14 @@ import type { PublicUser } from "@/lib/auth";
 const NAV = [
   { href: "/admin/today", label: "Today", icon: Activity },
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/admin/calendar", label: "Calendar", icon: Calendar },
   { href: "/admin/reservations", label: "Reservations", icon: CalendarRange },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/payments", label: "Payments", icon: CreditCard },
   { href: "/admin/menu", label: "Menu", icon: UtensilsCrossed },
   { href: "/admin/reports", label: "Reports", icon: BarChart3 },
+  { href: "/admin/audit", label: "Audit log", icon: Shield },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export default function AdminShell({ user, children }: { user: PublicUser; children: React.ReactNode }) {

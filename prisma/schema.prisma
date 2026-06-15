@@ -36,6 +36,42 @@ model DishAvailability {
   updatedAt DateTime @updatedAt
 }
 
+/// Singleton — restaurant configuration. Row keyed `id = "default"`.
+model RestaurantSettings {
+  id              String   @id @default("default")
+  venueName       String   @default("Xasu")
+  venueAddress    String   @default("Ulaanbaatar, Mongolia")
+  contactPhone    String   @default("")
+  contactEmail    String   @default("")
+  /// JSON: { mon: { open: "17:00", close: "23:00", closed: false }, ... }
+  hours           Json
+  /// Deposit per booking, in MNT
+  depositMnt      Int      @default(20000)
+  maxPartySize    Int      @default(12)
+  /// JSON string[] — YYYY-MM-DD dates blacked out (holidays, private events)
+  blackoutDates   Json
+  /// Reservations only accepted up to N days ahead
+  bookingWindow   Int      @default(60)
+  updatedAt       DateTime @updatedAt
+}
+
+/// Append-only audit trail for admin actions. Diff stored as JSON.
+model AuditEntry {
+  id         String   @id @default(cuid())
+  actorId    String
+  actorName  String
+  action     String   // e.g. "reservation.update", "settings.update"
+  entity     String   // e.g. "reservation", "settings", "dish"
+  entityId   String?
+  /// JSON blob: { before: {...}, after: {...} }
+  diff       Json
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entity, entityId])
+  @@index([actorId])
+}
+
 model Session {
   token     String   @id
   userId    String

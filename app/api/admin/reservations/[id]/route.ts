@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
+import { audit } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +45,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (Object.keys(patch).length === 0) return NextResponse.json({ error: "no_changes" }, { status: 400 });
 
   try {
+    const before = await prisma.reservation.findUnique({ where: { id: params.id } });
     const r = await prisma.reservation.update({ where: { id: params.id }, data: patch });
+    audit(admin, "reservation.update", "reservation", r.id, before, r);
     return NextResponse.json({ data: r });
   } catch (e: any) {
     console.error("[admin patch reservation]", e?.message);
@@ -56,7 +59,9 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
   const admin = await getCurrentAdmin();
   if (!admin) return NextResponse.json({ error: "forbidden" }, { status: 403 });
   try {
+    const before = await prisma.reservation.findUnique({ where: { id: params.id } });
     await prisma.reservation.delete({ where: { id: params.id } });
+    audit(admin, "reservation.delete", "reservation", params.id, before, null);
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "not_found" }, { status: 404 });

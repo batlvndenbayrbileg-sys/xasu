@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, Search, RefreshCw, X, ChevronDown, Plus } from "lucide-react";
+import { Loader2, Search, RefreshCw, X, ChevronDown, Plus, Download } from "lucide-react";
+import { downloadCsv } from "@/lib/csv";
 import clsx from "clsx";
 import { getJson, sendJson } from "@/lib/fetcher";
 import { formatMnt } from "@/lib/payments";
@@ -59,6 +60,16 @@ export default function AdminReservations() {
         <div className="flex items-center gap-2">
           <button onClick={load} className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink transition">
             <RefreshCw size={13} /> Refresh
+          </button>
+          <button onClick={() => rows && downloadCsv(rows.map((r) => ({
+            id: r.id, date: r.date, time: r.time, table: r.tableId, zone: r.zone,
+            party: r.partySize, status: r.status, payment: r.paymentStatus, amount: r.amount,
+            guest: r.guestName ?? r.user?.name ?? "", email: r.user?.email ?? "",
+            phone: r.guestPhone ?? "", source: r.source ?? "", created: r.createdAt,
+          })), `reservations-${new Date().toISOString().slice(0, 10)}.csv`)}
+            disabled={!rows || rows.length === 0}
+            className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink transition disabled:opacity-40">
+            <Download size={13} /> Export CSV
           </button>
           <Link href="/admin/reservations/new"
             className="inline-flex items-center gap-1.5 bg-accent text-white font-semibold px-4 py-2 rounded-full shadow-glow hover:bg-accent-soft transition text-[13px]">
