@@ -48,15 +48,24 @@ model Session {
 
 model Reservation {
   id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// null when an admin creates a walk-in / phone booking — guestName/Phone used instead.
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// For walk-ins / phone bookings — name + phone are mandatory if userId is null.
+  guestName  String?
+  guestPhone String?
   tableId   String
   zone      String
   partySize Int
   date      String // YYYY-MM-DD
   time      String // HH:mm
-  status    String   @default("CONFIRMED") // CONFIRMED | CANCELLED
+  status    String   @default("CONFIRMED") // CONFIRMED | ARRIVED | COMPLETED | CANCELLED | NO_SHOW
+  /// Where the booking came from — used in analytics and audit.
+  source    String   @default("online") // online | walkin | phone | admin
+  /// Free-form admin annotations: allergies, prefs, special occasions.
+  notes     String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // ── Deposit payment (Wire) ──
   amount          Int     @default(0) // deposit in MNT (integer)
@@ -64,5 +73,7 @@ model Reservation {
   paymentIntentId String?
 
   @@index([userId])
+  @@index([guestPhone])
   @@index([tableId, date, time])
+  @@index([date])
 }

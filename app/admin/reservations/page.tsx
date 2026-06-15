@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Loader2, Search, RefreshCw, Check, X, ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { Loader2, Search, RefreshCw, X, ChevronDown, Plus } from "lucide-react";
 import clsx from "clsx";
 import { getJson, sendJson } from "@/lib/fetcher";
 import { formatMnt } from "@/lib/payments";
@@ -12,7 +13,10 @@ interface Row {
   id: string; tableId: string; zone: string;
   date: string; time: string; partySize: number;
   status: string; paymentStatus: string; amount: number;
-  createdAt: string; user: { name: string; email: string } | null;
+  source?: string;
+  createdAt: string;
+  user: { name: string; email: string } | null;
+  guestName?: string | null; guestPhone?: string | null;
 }
 
 const STATUSES = ["CONFIRMED", "ARRIVED", "COMPLETED", "CANCELLED", "NO_SHOW"];
@@ -52,9 +56,15 @@ export default function AdminReservations() {
           <h1 className="font-display text-[28px] md:text-[34px] font-bold">Reservations</h1>
           <p className="text-muted text-[14px] mt-1">All bookings, filterable. Click a status pill to update.</p>
         </div>
-        <button onClick={load} className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink transition">
-          <RefreshCw size={13} /> Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={load} className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink transition">
+            <RefreshCw size={13} /> Refresh
+          </button>
+          <Link href="/admin/reservations/new"
+            className="inline-flex items-center gap-1.5 bg-accent text-white font-semibold px-4 py-2 rounded-full shadow-glow hover:bg-accent-soft transition text-[13px]">
+            <Plus size={14} /> New booking
+          </Link>
+        </div>
       </div>
 
       {/* filters */}
@@ -95,8 +105,13 @@ export default function AdminReservations() {
                 {rows.map((r) => (
                   <tr key={r.id} className="hover:bg-neutral-50 dark:hover:bg-neutral-50">
                     <Td>
-                      <div className="font-semibold">{r.user?.name ?? "—"}</div>
-                      <div className="text-[11px] text-muted">{r.user?.email ?? ""}</div>
+                      <Link href={`/admin/reservations/${r.id}`} className="block">
+                        <div className="font-semibold inline-flex items-center gap-2">
+                          {r.guestName ?? r.user?.name ?? "—"}
+                          {!r.user && <span className="text-[9px] font-bold uppercase tracking-widest bg-neutral-100 text-muted px-1.5 py-0.5 rounded">Walk-in</span>}
+                        </div>
+                        <div className="text-[11px] text-muted">{r.user?.email ?? r.guestPhone ?? ""}</div>
+                      </Link>
                     </Td>
                     <Td>
                       <span className="font-mono text-[12px]">{r.tableId}</span>
@@ -118,13 +133,13 @@ export default function AdminReservations() {
             <ul className="md:hidden divide-y divide-line">
               {rows.map((r) => (
                 <li key={r.id} className="p-4 space-y-2">
-                  <div className="flex items-start gap-3">
+                  <Link href={`/admin/reservations/${r.id}`} className="flex items-start gap-3">
                     <div className="w-9 h-9 rounded-lg bg-ink text-white grid place-items-center font-bold text-[13px] flex-none">{r.partySize}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-[14px] truncate">{r.user?.name ?? "—"}</div>
-                      <div className="text-[11px] text-muted truncate">{r.user?.email}</div>
+                      <div className="font-semibold text-[14px] truncate">{r.guestName ?? r.user?.name ?? "—"}</div>
+                      <div className="text-[11px] text-muted truncate">{r.user?.email ?? r.guestPhone}</div>
                     </div>
-                  </div>
+                  </Link>
                   <div className="text-[12px] text-muted">{r.tableId} · {r.zone} · {r.date} · {r.time}</div>
                   <div className="flex gap-2">
                     <StatusSelect current={r.status} onPick={(s) => patch(r.id, { status: s })} />

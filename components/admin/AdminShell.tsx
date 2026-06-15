@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home } from "lucide-react";
+import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users } from "lucide-react";
 import clsx from "clsx";
 import { sendJson } from "@/lib/fetcher";
 import type { PublicUser } from "@/lib/auth";
 
 const NAV = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/today", label: "Today", icon: Activity },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/reservations", label: "Reservations", icon: CalendarRange },
+  { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/payments", label: "Payments", icon: CreditCard },
   { href: "/admin/menu", label: "Menu", icon: UtensilsCrossed },
   { href: "/admin/reports", label: "Reports", icon: BarChart3 },
@@ -17,7 +19,7 @@ const NAV = [
 
 export default function AdminShell({ user, children }: { user: PublicUser; children: React.ReactNode }) {
   const pathname = usePathname();
-  const isActive = (href: string) => (href === "/admin" ? pathname === "/admin" : pathname.startsWith(href));
+  const isActive = (href: string, exact?: boolean) => (exact || href === "/admin" ? pathname === href : pathname.startsWith(href));
 
   async function logout() {
     await sendJson("/api/auth/logout", "POST");
@@ -35,11 +37,11 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
         </div>
 
         <nav className="flex-1 p-3 space-y-1">
-          {NAV.map(({ href, label, icon: Icon }) => (
+          {NAV.map(({ href, label, icon: Icon, exact }) => (
             <Link key={href} href={href}
               className={clsx(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition",
-                isActive(href)
+                isActive(href, exact)
                   ? "bg-accent/10 text-accent"
                   : "text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-100 dark:text-neutral-300",
               )}>
@@ -81,11 +83,11 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
         {/* mobile tabs */}
         <div className="md:hidden sticky top-14 z-30 bg-white dark:bg-[#14161b] border-b border-line overflow-x-auto no-scrollbar">
           <div className="flex gap-1 p-2 min-w-max">
-            {NAV.map(({ href, label, icon: Icon }) => (
+            {NAV.map(({ href, label, icon: Icon, exact }) => (
               <Link key={href} href={href}
                 className={clsx(
                   "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold whitespace-nowrap transition",
-                  isActive(href) ? "bg-accent text-white" : "text-neutral-500 hover:bg-neutral-100",
+                  isActive(href, exact) ? "bg-accent text-white" : "text-neutral-500 hover:bg-neutral-100",
                 )}>
                 <Icon size={13} /> {label}
               </Link>
