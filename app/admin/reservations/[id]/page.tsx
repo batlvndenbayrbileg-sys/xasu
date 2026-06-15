@@ -191,9 +191,17 @@ export default function AdminReservationDetail() {
                 </button>
               )}
               {form.paymentStatus === "paid" && (
-                <button onClick={() => { update("paymentStatus", "refunded"); }}
+                <button
+                  onClick={async () => {
+                    if (!confirm("Refund the deposit via Wire? This is irreversible.")) return;
+                    const { ok, data, error } = await sendJson(`/api/admin/reservations/${r.id}/refund`, "POST", { reason: "requested_by_customer" });
+                    if (!ok) { toast.error(error ?? "Refund failed"); return; }
+                    if ((data as any)?.wireError) toast.error(`Wire: ${(data as any).wireError} — marked locally`);
+                    else toast.success("Refund issued");
+                    load();
+                  }}
                   className="w-full text-left bg-sky-50 text-sky-700 font-semibold px-4 py-2.5 rounded-lg hover:bg-sky-100 transition text-[13px]">
-                  Mark deposit refunded
+                  Issue refund via Wire
                 </button>
               )}
               <p className="text-[11px] text-muted text-center pt-1">Click an action then press Save changes</p>

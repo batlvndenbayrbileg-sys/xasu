@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users, Calendar, Settings, Shield } from "lucide-react";
+import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users, Calendar, Settings, Shield, Map, UserCog, Bell } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getJson } from "@/lib/fetcher";
 import clsx from "clsx";
 import { sendJson } from "@/lib/fetcher";
 import type { PublicUser } from "@/lib/auth";
@@ -14,15 +16,62 @@ const NAV = [
   { href: "/admin/reservations", label: "Reservations", icon: CalendarRange },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/payments", label: "Payments", icon: CreditCard },
+  { href: "/admin/tables", label: "Tables", icon: Map },
   { href: "/admin/menu", label: "Menu", icon: UtensilsCrossed },
   { href: "/admin/reports", label: "Reports", icon: BarChart3 },
+  { href: "/admin/staff", label: "Staff", icon: UserCog },
   { href: "/admin/audit", label: "Audit log", icon: Shield },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
+function BellButton({ open, setOpen, count, recent }: { open: boolean; setOpen: (b: boolean) => void; count: number; recent: any[] }) {
+  return (
+    <div className="relative">
+      <button onClick={() => setOpen(!open)} aria-label="Notifications"
+        className="relative w-10 h-10 rounded-full bg-white dark:bg-[#1e2128] border border-line shadow-card grid place-items-center hover:border-accent transition">
+        <Bell size={16} />
+        {count > 0 && <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-white text-[10px] font-bold grid place-items-center">{count}</span>}
+      </button>
+      {open && (
+        <div className="absolute right-0 top-12 w-80 bg-white dark:bg-[#14161b] border border-line rounded-2xl shadow-2xl overflow-hidden">
+          <div className="px-4 py-3 border-b border-line flex items-center justify-between">
+            <span className="text-[11px] uppercase tracking-widest font-bold text-muted">Recent activity</span>
+            <Link href="/admin/audit" onClick={() => setOpen(false)} className="text-[11px] font-bold text-accent">View all →</Link>
+          </div>
+          {recent.length === 0 ? (
+            <div className="h-24 grid place-items-center text-muted text-[12px]">No activity yet</div>
+          ) : (
+            <ul className="max-h-96 overflow-y-auto divide-y divide-line">
+              {recent.map((r) => (
+                <li key={r.id} className="px-4 py-2.5 text-[12px]">
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-6 rounded bg-accent/10 text-accent grid place-items-center text-[10px] font-bold">{r.actorName.charAt(0).toUpperCase()}</span>
+                    <span className="font-semibold truncate">{r.actorName}</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted ml-auto">{r.action}</span>
+                  </div>
+                  <p className="text-[10px] text-muted mt-1 pl-8">{new Date(r.createdAt).toLocaleString()}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function AdminShell({ user, children }: { user: PublicUser; children: React.ReactNode }) {
   const pathname = usePathname();
   const isActive = (href: string, exact?: boolean) => (exact || href === "/admin" ? pathname === href : pathname.startsWith(href));
+  const [bellOpen, setBellOpen] = useState(false);
+  const [recent, setRecent] = useState<any[]>([]);
+
+  useEffect(() => {
+    const load = () => getJson<any[]>("/api/admin/audit").then(({ data }) => setRecent((data ?? []).slice(0, 8)));
+    load();
+    const id = setInterval(load, 60000);
+    return () => clearInterval(id);
+  }, []);
 
   async function logout() {
     await sendJson("/api/auth/logout", "POST");
@@ -78,10 +127,16 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Xasu Admin" className="h-8 w-auto" />
           <span className="text-[11px] uppercase tracking-widest text-muted font-semibold">Admin</span>
-          <button onClick={logout} aria-label="Sign out" className="text-muted">
-            <LogOut size={15} />
-          </button>
+          <div className="flex items-center gap-2">
+            <BellButton open={bellOpen} setOpen={setBellOpen} count={recent.length} recent={recent} />
+            <button onClick={logout} aria-label="Sign out" className="text-muted"><LogOut size={15} /></button>
+          </div>
         </header>
+
+        {/* Desktop floating bell */}
+        <div className="hidden md:block fixed top-4 right-4 z-30">
+          <BellButton open={bellOpen} setOpen={setBellOpen} count={recent.length} recent={recent} />
+        </div>
 
         {/* mobile tabs */}
         <div className="md:hidden sticky top-14 z-30 bg-white dark:bg-[#14161b] border-b border-line overflow-x-auto no-scrollbar">

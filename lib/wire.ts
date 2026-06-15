@@ -117,6 +117,20 @@ export async function cancelPaymentIntent(id: string): Promise<PaymentIntent> {
   return wireFetch<PaymentIntent>(`/payment_intents/${id}/cancel`, { method: "POST" });
 }
 
+/** Issue a refund for a captured PaymentIntent. */
+export async function refundPaymentIntent(opts: { paymentIntentId: string; amount?: number; reason?: string; idempotencyKey: string }): Promise<{ id: string; status: string; amount?: number }> {
+  if (!WIRE_LIVE) return { id: `re_mock_${Date.now()}`, status: "succeeded", amount: opts.amount };
+  return wireFetch("/refunds", {
+    method: "POST",
+    idempotencyKey: opts.idempotencyKey,
+    json: {
+      payment_intent: opts.paymentIntentId,
+      ...(opts.amount ? { amount: opts.amount } : {}),
+      ...(opts.reason ? { reason: opts.reason } : {}),
+    },
+  });
+}
+
 /** Create a hosted checkout session for a PaymentIntent. Returns a `pay.wire.mn/c/{token}` URL. */
 export async function createCheckoutSession(opts: {
   paymentIntentId: string; successUrl?: string; idempotencyKey: string;

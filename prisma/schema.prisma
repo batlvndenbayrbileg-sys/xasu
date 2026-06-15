@@ -55,6 +55,28 @@ model RestaurantSettings {
   updatedAt       DateTime @updatedAt
 }
 
+/// Restaurant table — once seeded from lib/data.ts, admin can fully manage.
+model Table {
+  id        String  @id
+  label     String
+  zone      String
+  shape     String  // round | rect | square | booth
+  seats     Int
+  x         Float   // 0–100 grid
+  y         Float
+  rotation  Float   @default(0)
+  position  String  // descriptive
+  image     String
+  pano      String?
+  /// Permanently disabled (vs temporary status like cleaning)
+  disabled  Boolean @default(false)
+  /// Display order
+  sortOrder Int     @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@index([zone])
+}
+
 /// Append-only audit trail for admin actions. Diff stored as JSON.
 model AuditEntry {
   id         String   @id @default(cuid())
