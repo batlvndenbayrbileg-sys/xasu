@@ -49,22 +49,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
         className
       )}
     >
-      {/* soft ambient glows */}
-      <div className="pointer-events-none absolute -top-32 left-1/4 w-[520px] h-[520px] rounded-full bg-accent/10 blur-3xl" />
-      <div className="pointer-events-none absolute top-1/3 right-0 w-[420px] h-[420px] rounded-full bg-amber-200/20 blur-3xl" />
-
       <div className="z-10 flex flex-col items-center max-w-4xl mt-2 md:mt-8 w-full">
-        {/* Tagline pill */}
-        <motion.div
-          initial="hidden"
-          animate="show"
-          variants={FADE_IN}
-          className="mb-4 md:mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-white/70 px-3 sm:px-4 py-1.5 text-[11.5px] sm:text-[13px] font-medium text-muted backdrop-blur-sm shadow-sm"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-          {tagline}
-        </motion.div>
-
         {/* Title with staggered words */}
         <motion.h1
           initial="hidden"
