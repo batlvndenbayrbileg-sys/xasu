@@ -7,7 +7,14 @@
 }
 .dark { --bg: #0b0c0f; }
 
-html { scroll-behavior: smooth; }
+/* Lenis takes over smooth scroll — disable native smooth so they don't fight.
+ * Also expose Lenis lifecycle classes for predictable touch behaviour. */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-scrolling iframe { pointer-events: none; }
 body {
   background: var(--bg);
   color: #1a1a1a;

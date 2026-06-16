@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/lib/theme";
 import { Toaster } from "@/components/ui/toaster";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import ScrollProgress from "@/components/ScrollProgress";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const noFlashTheme = `(function(){try{var t=localStorage.getItem('gg_theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme:dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
 
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: noFlashTheme }} />
         <ThemeProvider>
           <I18nProvider>
+            <SmoothScroll />
             <ScrollProgress />
             <SiteHeader />
             <main className="flex-1 w-full pb-16 md:pb-0">{children}</main>
