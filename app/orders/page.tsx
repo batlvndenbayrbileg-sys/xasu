@@ -87,6 +87,15 @@ export default function OrdersPage() {
               {filtered.map((r) => {
                 const table = TABLES.find((x) => x.id === r.tableId);
                 const kind = classify(r);
+                const isPaid = r.paymentStatus === "paid";
+                // upcoming: paid → green "Баталгаажсан", unpaid → amber "Төлбөр хүлээж буй"
+                const badge = kind === "upcoming"
+                  ? (isPaid
+                      ? { cls: "bg-emerald-50 text-emerald-700", label: t("orders.stConfirmed") }
+                      : { cls: "bg-amber-50 text-amber-700", label: t("orders.stPending") })
+                  : kind === "completed"
+                    ? { cls: "bg-sky-50 text-sky-700", label: t("orders.stCompleted") }
+                    : { cls: "bg-neutral-100 text-neutral-500", label: t("orders.stCancelled") };
                 return (
                   <article key={r.id}
                     className={clsx("bg-white border rounded-2xl overflow-hidden transition",
@@ -94,12 +103,9 @@ export default function OrdersPage() {
                     {table && (
                       <div className="relative h-28">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={table.image} alt="" className={clsx("w-full h-full object-cover", kind !== "upcoming" && "grayscale")} />
-                        <span className={clsx("absolute top-2 right-2 text-[10px] font-semibold px-2.5 py-1 rounded-full",
-                          kind === "upcoming" && "bg-emerald-50 text-emerald-700",
-                          kind === "completed" && "bg-sky-50 text-sky-700",
-                          kind === "cancelled" && "bg-neutral-100 text-neutral-500")}>
-                          {kind === "upcoming" ? t("orders.stConfirmed") : kind === "completed" ? t("orders.stCompleted") : t("orders.stCancelled")}
+                        <img src={table.image} alt="" className={clsx("w-full h-full object-cover", kind !== "upcoming" && "grayscale", kind === "upcoming" && !isPaid && "opacity-90")} />
+                        <span className={clsx("absolute top-2 right-2 text-[10px] font-bold px-2.5 py-1 rounded-full", badge.cls)}>
+                          {badge.label}
                         </span>
                       </div>
                     )}
@@ -117,21 +123,23 @@ export default function OrdersPage() {
                         <span className="inline-flex items-center gap-1.5"><Users size={14} />{r.partySize}</span>
                       </div>
                       {kind === "upcoming" && (
-                        <div className="mt-3 flex items-center gap-4">
-                          {r.paymentStatus !== "paid" ? (
-                            <button onClick={() => router.push(`/pay?r=${r.id}`)}
-                              className="inline-flex items-center gap-1 text-[13px] font-semibold text-accent hover:text-accent-soft">
-                              <CreditCard size={14} /> {t("pay.payNow")}
-                            </button>
+                        <div className="mt-3 flex items-center gap-4 flex-wrap">
+                          {!isPaid ? (
+                            <>
+                              <button onClick={() => router.push(`/pay?r=${r.id}`)}
+                                className="inline-flex items-center gap-1 text-[13px] font-semibold text-accent hover:text-accent-soft">
+                                <CreditCard size={14} /> {t("pay.payNow")}
+                              </button>
+                              <button onClick={() => cancel(r.id)}
+                                className="inline-flex items-center gap-1 text-[13px] font-semibold text-red-500 hover:text-red-600">
+                                <X size={14} /> {t("orders.cancel")}
+                              </button>
+                            </>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-emerald-600">
-                              <CheckCircle2 size={13} /> {t("conf.paid")}
+                            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700">
+                              <CheckCircle2 size={13} /> {t("orders.paidNote")}
                             </span>
                           )}
-                          <button onClick={() => cancel(r.id)}
-                            className="inline-flex items-center gap-1 text-[13px] font-semibold text-red-500 hover:text-red-600">
-                            <X size={14} /> {t("orders.cancel")}
-                          </button>
                         </div>
                       )}
                     </div>

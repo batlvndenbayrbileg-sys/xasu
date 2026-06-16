@@ -305,8 +305,10 @@ const DICT = {
   "orders.cancel": { mn: "Захиалга цуцлах", en: "Cancel reservation" },
   "orders.confirmCancel": { mn: "Энэ захиалгыг цуцлах уу?", en: "Cancel this reservation?" },
   "orders.stConfirmed": { mn: "Баталгаажсан", en: "Confirmed" },
+  "orders.stPending": { mn: "Төлбөр хүлээж буй", en: "Awaiting payment" },
   "orders.stCompleted": { mn: "Дууссан", en: "Completed" },
   "orders.stCancelled": { mn: "Цуцалсан", en: "Cancelled" },
+  "orders.paidNote": { mn: "Урьдчилгаа төлсөн — цуцлах боломжгүй", en: "Deposit paid — cannot cancel" },
 
   // profile
   "profile.notSignedIn": { mn: "Та нэвтрээгүй байна", en: "You're not signed in" },
