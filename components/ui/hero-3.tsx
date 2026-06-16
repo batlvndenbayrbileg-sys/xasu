@@ -45,7 +45,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
   return (
     <section
       className={cn(
-        "relative w-full min-h-[78vh] md:min-h-[88vh] overflow-hidden bg-[var(--bg)] flex flex-col items-center text-center px-4 pt-20 md:pt-24",
+        "relative w-full min-h-[88vh] md:min-h-[88vh] overflow-hidden bg-[var(--bg)] flex flex-col items-center text-center px-3 sm:px-4 pt-20 md:pt-24",
         className
       )}
     >
@@ -53,13 +53,13 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
       <div className="pointer-events-none absolute -top-32 left-1/4 w-[520px] h-[520px] rounded-full bg-accent/10 blur-3xl" />
       <div className="pointer-events-none absolute top-1/3 right-0 w-[420px] h-[420px] rounded-full bg-amber-200/20 blur-3xl" />
 
-      <div className="z-10 flex flex-col items-center max-w-4xl mt-4 md:mt-8">
+      <div className="z-10 flex flex-col items-center max-w-4xl mt-2 md:mt-8 w-full">
         {/* Tagline pill */}
         <motion.div
           initial="hidden"
           animate="show"
           variants={FADE_IN}
-          className="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-white/70 px-4 py-1.5 text-[13px] font-medium text-muted backdrop-blur-sm shadow-sm"
+          className="mb-4 md:mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-white/70 px-3 sm:px-4 py-1.5 text-[11.5px] sm:text-[13px] font-medium text-muted backdrop-blur-sm shadow-sm"
         >
           <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
           {tagline}
@@ -70,7 +70,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
           initial="hidden"
           animate="show"
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
-          className="font-display text-[44px] sm:text-[64px] md:text-[78px] font-bold tracking-tight text-ink leading-[1.02]"
+          className="font-display text-[32px] xs:text-[38px] sm:text-[52px] md:text-[64px] lg:text-[72px] font-bold tracking-tight text-ink leading-[1.05] md:leading-[1.02] px-2 sm:px-0"
         >
           {typeof title === "string"
             ? title.split(" ").map((word, i) => (
@@ -87,7 +87,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
           animate="show"
           variants={FADE_IN}
           transition={{ delay: 0.5 }}
-          className="mt-6 max-w-xl text-[15px] md:text-[17px] text-muted leading-relaxed"
+          className="mt-5 md:mt-6 max-w-xl text-[14px] md:text-[17px] text-muted leading-relaxed px-3 sm:px-0"
         >
           {description}
         </motion.p>

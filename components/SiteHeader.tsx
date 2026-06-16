@@ -44,10 +44,10 @@ export default function SiteHeader() {
     <>
       <header className={clsx("fixed top-0 inset-x-0 z-50 transition-all duration-300",
         solid ? "bg-white/80 backdrop-blur-md border-b border-line shadow-[0_1px_20px_rgba(0,0,0,.04)]" : "bg-transparent")}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 md:h-20 flex items-center justify-between gap-4">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 h-14 md:h-20 flex items-center justify-between gap-2 sm:gap-4">
           <Link href="/" aria-label="Home" className="flex items-center shrink-0 group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo.png" alt="Xasu" className="h-10 md:h-12 w-auto group-hover:scale-[1.03] transition-transform" />
+            <img src="/logo.png" alt="Xasu" className="h-8 md:h-12 w-auto group-hover:scale-[1.03] transition-transform" />
           </Link>
 
           {/* desktop nav with animated underline */}

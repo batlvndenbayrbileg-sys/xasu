@@ -58,9 +58,9 @@ const DICT = {
   "toast.favCleared": { mn: "Дуртай жагсаалт цэвэрлэгдлээ", en: "Favorites cleared" },
 
   // home
-  "home.badge": { mn: "Шинэ — Онлайн ширээ захиалга, амьд танхимын зураг", en: "New — Online table booking with live floor plan" },
-  "home.heroTitle": { mn: "Зочлох ширээгээ\nөөрөө сонгож захиал", en: "Pick your table.\nBook in seconds." },
-  "home.heroSub": { mn: "Хоол хүртэх дуртай ширээгээ танхимын зургаас сонгож, 360°-аар үзээд онлайнаар захиалаарай. Цаг алдалгүй, утсаар ярилгүйгээр — нэг минутын дотор баталгаажна.", en: "Browse our floor plan, view tables in 360°, and lock in your favourite spot online. No phone calls — confirmed in under a minute." },
+  "home.badge": { mn: "Газар дундын тэнгисийн хоол · Лас Крусес", en: "Mediterranean cuisine · Las Cruces" },
+  "home.heroTitle": { mn: "Газар дундын\nтэнгисийн тансаг\nамт", en: "The taste of the\nMediterranean,\nperfected" },
+  "home.heroSub": { mn: "ХАСУ ресторан — Газар дундын тэнгисийн хоолны тансаг амтыг төгс үйлчилгээгээр мэдрүүлнэ. Танхимын зургаас яг өөрийн ширээгээ сонгож, нэг минутын дотор онлайнаар захиалаарай.", en: "Xasu — bringing you the rich flavours of the Mediterranean with service to match. Pick your exact table from our live floor plan and book online in under a minute." },
   "home.reserve": { mn: "Ширээ захиалах", en: "Reserve a table" },
   "home.explore": { mn: "Цэс үзэх", en: "Explore menu" },
   "home.statRating": { mn: "Дундаж үнэлгээ", en: "Avg rating" },
