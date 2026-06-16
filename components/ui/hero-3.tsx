@@ -45,7 +45,7 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
   return (
     <section
       className={cn(
-        "relative w-full min-h-[88vh] md:min-h-[88vh] overflow-hidden bg-[var(--bg)] flex flex-col items-center text-center px-3 sm:px-4 pt-20 md:pt-24",
+        "relative w-full min-h-[auto] md:min-h-[88vh] overflow-hidden bg-[var(--bg)] flex flex-col items-center text-center px-3 sm:px-4 pt-20 md:pt-24 pb-4 md:pb-0",
         className
       )}
     >
@@ -90,17 +90,18 @@ export const AnimatedMarqueeHero: React.FC<AnimatedMarqueeHeroProps> = ({
         </motion.div>
       </div>
 
-      {/* Animated image marquee */}
-      <div className="absolute bottom-0 left-0 w-full h-[28%] md:h-[34%] [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_80%,transparent)] pointer-events-none">
+      {/* Animated image marquee — relative on mobile (flows after content),
+          absolute on desktop (positioned at bottom of viewport hero). */}
+      <div className="mt-6 md:mt-0 relative md:absolute md:bottom-0 md:left-0 w-full md:h-[34%] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_15%,black_80%,transparent)] pointer-events-none">
         <motion.div
-          className="flex gap-4 md:gap-5 px-4 h-full items-end pb-4"
+          className="flex gap-4 md:gap-5 px-4 md:h-full items-end pb-4"
           animate={{ x: ["0%", "-50%"] }}
           transition={{ ease: "linear", duration: 50, repeat: Infinity }}
         >
           {loop.map((src, index) => (
             <div
               key={index}
-              className="relative aspect-[3/4] h-36 md:h-52 flex-shrink-0 rounded-2xl overflow-hidden shadow-xl ring-1 ring-black/5"
+              className="relative aspect-[3/4] h-32 sm:h-36 md:h-52 flex-shrink-0 rounded-2xl overflow-hidden shadow-xl ring-1 ring-black/5"
               style={{ rotate: `${index % 2 === 0 ? -3 : 4}deg` }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
