@@ -1,10 +1,10 @@
 "use client";
-import { Heart, Star, Eye } from "lucide-react";
+import { Plus, Star, Eye, Check } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import clsx from "clsx";
 import type { Dish } from "@/lib/types";
-import { useFavorites } from "@/lib/favorites";
+import { useCart } from "@/lib/cart";
 import { useMounted } from "@/lib/useMounted";
 import { formatDishPrice } from "@/lib/payments";
 
@@ -12,10 +12,10 @@ import { formatDishPrice } from "@/lib/payments";
 const DISH_FALLBACK = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=70";
 
 export default function DishCard({ dish }: { dish: Dish }) {
-  const ids = useFavorites((s) => s.ids);
-  const toggle = useFavorites((s) => s.toggle);
+  const items = useCart((s) => s.items);
+  const add = useCart((s) => s.add);
   const mounted = useMounted();
-  const liked = mounted && ids.includes(dish.id);
+  const inCart = mounted && items.some((x) => x.id === dish.id);
 
   return (
     <Link
@@ -33,12 +33,13 @@ export default function DishCard({ dish }: { dish: Dish }) {
           <Eye size={13} /> {dish.prepMinutes}′
         </span>
         <motion.button
-          whileTap={{ scale: 0.8 }}
-          onClick={(e) => { e.preventDefault(); toggle(dish.id); }}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/85 backdrop-blur grid place-items-center shadow-sm"
-          aria-label="Favorite"
+          whileTap={{ scale: 0.85 }}
+          onClick={(e) => { e.preventDefault(); add(dish.id); }}
+          className={clsx("absolute top-3 right-3 w-9 h-9 rounded-full grid place-items-center shadow-md transition-colors",
+            inCart ? "bg-accent text-white" : "bg-white/90 text-ink backdrop-blur hover:bg-accent hover:text-white")}
+          aria-label={inCart ? "In cart" : "Add to cart"}
         >
-          <Heart size={16} className={clsx("transition-colors", liked ? "fill-accent text-accent" : "text-ink")} />
+          {inCart ? <Check size={16} /> : <Plus size={17} />}
         </motion.button>
         <span className="absolute bottom-3 left-3 bg-white/90 backdrop-blur text-[12px] font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1">
           <Star size={12} className="fill-yellow-400 text-yellow-400" /> {dish.rating}

@@ -8,6 +8,7 @@ import { DISHES } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
 import { formatDishPrice } from "@/lib/payments";
 import { useFavorites } from "@/lib/favorites";
+import { useCart } from "@/lib/cart";
 import { useMounted } from "@/lib/useMounted";
 
 const INGREDIENTS = [
@@ -29,6 +30,8 @@ export default function DishDetail({ params }: { params: { id: string } }) {
   const { t } = useI18n();
   const ids = useFavorites((s) => s.ids);
   const toggle = useFavorites((s) => s.toggle);
+  const addToCart = useCart((s) => s.add);
+  const inCart = useCart((s) => s.items.some((x) => x.id === params.id));
   const mounted = useMounted();
   const dish = DISHES.find((d) => d.id === params.id);
   if (!dish) notFound();
@@ -90,15 +93,14 @@ export default function DishDetail({ params }: { params: { id: string } }) {
             </div>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
-              <Link href="/book"
+              <button onClick={() => addToCart(dish.id)}
                 className="inline-flex items-center justify-center gap-2 bg-accent text-white font-semibold px-8 py-4 rounded-full shadow-glow hover:bg-accent-soft hover:gap-3 transition-all">
+                <ShoppingBasket size={18} /> {inCart ? "Сагсанд +1" : "Сагсанд нэмэх"}
+              </button>
+              <Link href="/book"
+                className="inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 rounded-full bg-white border border-line hover:border-accent hover:text-accent transition">
                 {t("dish.reserve")} <ArrowRight size={18} />
               </Link>
-              <button onClick={() => toggle(dish.id)}
-                className={clsx("inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 rounded-full border transition",
-                  liked ? "bg-accent/10 border-accent text-accent" : "bg-white border-line hover:bg-neutral-50")}>
-                <ShoppingBasket size={18} /> {liked ? t("dish.saved") : t("dish.save")}
-              </button>
             </div>
           </div>
         </div>

@@ -4,11 +4,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Heart, Menu, X, ArrowRight } from "lucide-react";
+import { MapPin, ShoppingBag, Menu, X, ArrowRight } from "lucide-react";
 import clsx from "clsx";
 import { useSession } from "@/lib/useSession";
 import { useI18n } from "@/lib/i18n";
-import { useFavorites } from "@/lib/favorites";
+import { useCart } from "@/lib/cart";
 import { useMounted } from "@/lib/useMounted";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
@@ -18,7 +18,7 @@ export default function SiteHeader() {
   const router = useRouter();
   const { user } = useSession();
   const { t } = useI18n();
-  const favCount = useFavorites((s) => s.ids.length);
+  const cartCount = useCart((s) => s.items.reduce((n, x) => n + x.qty, 0));
   const mounted = useMounted();
   const [open, setOpen] = useState(false);
 
@@ -69,13 +69,13 @@ export default function SiteHeader() {
             <LanguageToggle className="hidden sm:flex scale-90" />
             <ThemeToggle className="hidden sm:flex scale-90" />
 
-            {/* favorites */}
-            <Link href="/favorites" aria-label={t("nav.favorites")}
+            {/* cart */}
+            <Link href="/cart" aria-label={t("nav.cart")}
               className={clsx("relative w-9 h-9 md:w-10 md:h-10 rounded-full grid place-items-center transition", solid ? "hover:bg-neutral-100" : "hover:bg-white/10")}>
-              <Heart size={18} className={clsx(pathname === "/favorites" ? "fill-accent text-accent" : solid ? "text-ink" : "text-white")} />
-              {mounted && favCount > 0 && (
+              <ShoppingBag size={18} className={clsx(pathname === "/cart" ? "text-accent" : solid ? "text-ink" : "text-white")} />
+              {mounted && cartCount > 0 && (
                 <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}
-                  className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-white text-[10px] font-bold grid place-items-center">{favCount}</motion.span>
+                  className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-accent text-white text-[10px] font-bold grid place-items-center">{cartCount}</motion.span>
               )}
             </Link>
 
@@ -117,7 +117,7 @@ export default function SiteHeader() {
               </div>
 
               <nav className="mt-8 flex flex-col gap-1">
-                {[...links, { href: "/favorites", label: t("nav.favorites") }].map((l, i) => (
+                {[...links, { href: "/cart", label: t("nav.cart") }].map((l, i) => (
                   <motion.div key={l.href} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05 + i * 0.05 }}>
                     <Link href={l.href}
                       className={clsx("flex items-center justify-between py-3.5 text-[17px] font-semibold border-b border-line",
