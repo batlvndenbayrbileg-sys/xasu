@@ -250,12 +250,13 @@ const IMG = {
   private:     "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=900&q=80",
 } as const;
 
-// Wide panoramic photos for the 360°/AR viewer, per zone.
+// Wide panoramic photos for the 360°/AR viewer, per zone — picked to clearly
+// show actual restaurant interiors with visible tables.
 const PANO: Record<string, string> = {
-  Indoor: "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=2400&q=80",
-  Outdoor: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=2400&q=80",
-  "Garden Terrace": "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=2400&q=80",
-  "Private Meeting": "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?auto=format&fit=crop&w=2400&q=80",
+  Indoor: "https://images.unsplash.com/photo-1592861956120-e524fc739696?auto=format&fit=crop&w=2400&q=80",
+  Outdoor: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=2400&q=80",
+  "Garden Terrace": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=2400&q=80",
+  "Private Meeting": "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=2400&q=80",
 };
 
 type TableSeed = Omit<RestaurantTable, "pano">;

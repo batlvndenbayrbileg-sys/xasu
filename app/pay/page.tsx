@@ -8,6 +8,7 @@ import { getJson, sendJson } from "@/lib/fetcher";
 import { useI18n } from "@/lib/i18n";
 import { toast } from "@/lib/toast";
 import { formatMnt } from "@/lib/payments";
+import { useCart } from "@/lib/cart";
 
 export default function PayPage() {
   return (
@@ -28,6 +29,7 @@ function PayInner() {
   const searchParams = useSearchParams();
   const reservationId = searchParams.get("r") ?? "";
   const isReturn = searchParams.get("return") === "1";
+  const clearCart = useCart((s) => s.clear);
 
   const [phase, setPhase] = useState<Phase>("loading");
   const [amount, setAmount] = useState(0);
@@ -51,9 +53,10 @@ function PayInner() {
 
   const finish = useCallback(() => {
     setPhase("success");
-    toast.success(t("pay.success"));
+    clearCart(); // food was paid for as part of this reservation
+    toast.success(t("book.bookedToast"));
     setTimeout(() => router.push(`/confirmation?id=${reservationId}`), 1100);
-  }, [router, reservationId, t]);
+  }, [router, reservationId, t, clearCart]);
 
   const goLogin = useCallback(() => {
     const back = `/pay?r=${reservationId}${isReturn ? "&return=1" : ""}`;

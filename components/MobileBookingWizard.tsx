@@ -47,7 +47,6 @@ export default function MobileBookingWizard() {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
   const [loadingTables, setLoadingTables] = useState(false);
   const [show360, setShow360] = useState(false);
-  const [showFoodDialog, setShowFoodDialog] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -93,20 +92,11 @@ export default function MobileBookingWizard() {
     setSubmitting(false);
     if (status === 401) { router.push("/login?redirect=/book"); return; }
     if (!ok) { toast.error(error ?? t("book.couldNotReserve")); return; }
-    toast.success(t("book.bookedToast"));
-    sessionStorage.setItem("__lastReservation", data.id);
-    reset(); // clear store so a new visit starts fresh
-    setShowFoodDialog(true);
+    // Don't toast — booking isn't confirmed until deposit is paid.
+    reset();
+    router.push(`/booking/${data.id}/review`);
   }
 
-  function goPay() {
-    const id = sessionStorage.getItem("__lastReservation");
-    if (id) router.push(`/pay?r=${id}`);
-  }
-  function goMenuAndPay() {
-    const id = sessionStorage.getItem("__lastReservation");
-    if (id) router.push(`/menu?return=/pay?r=${id}`);
-  }
 
   return (
     <div className="lg:hidden min-h-[calc(100vh-4rem)] flex flex-col bg-[var(--bg)]">
@@ -267,17 +257,6 @@ export default function MobileBookingWizard() {
       {/* 360° viewer */}
       <Table360 table={show360 ? selected ?? null : null} onClose={() => setShow360(false)}
         onBook={() => { setShow360(false); setStep(3); }} />
-
-      {/* Food prompt dialog */}
-      <AnimatePresence>
-        {showFoodDialog && (
-          <FoodDialog
-            t={t}
-            onSkip={() => { setShowFoodDialog(false); goPay(); }}
-            onPick={() => { setShowFoodDialog(false); goMenuAndPay(); }}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }
@@ -327,27 +306,3 @@ function Row({ icon, label, value }: { icon: React.ReactNode; label: string; val
   );
 }
 
-function FoodDialog({ t, onSkip, onPick }: { t: (k: any) => string; onSkip: () => void; onPick: () => void }) {
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/55 flex items-end justify-center p-4">
-      <motion.div initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 280, damping: 28 }}
-        className="bg-white rounded-3xl w-full max-w-md p-6 shadow-2xl">
-        <div className="w-12 h-1.5 rounded-full bg-neutral-200 mx-auto mb-4" />
-        <h3 className="font-display text-[22px] font-bold text-center">{t("book.addFoodTitle")}</h3>
-        <p className="text-[13px] text-muted text-center mt-2">{t("book.addFoodDesc")}</p>
-        <div className="mt-6 grid grid-cols-2 gap-3">
-          <button onClick={onSkip}
-            className="py-3.5 rounded-full bg-white border border-line text-ink font-semibold active:scale-95 transition">
-            {t("book.skipFood")}
-          </button>
-          <button onClick={onPick}
-            className="py-3.5 rounded-full bg-accent text-white font-semibold shadow-glow active:scale-95 transition">
-            {t("book.pickFood")}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}

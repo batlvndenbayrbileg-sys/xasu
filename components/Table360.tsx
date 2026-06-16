@@ -88,12 +88,28 @@ export default function Table360({
               </motion.div>
             </div>
 
-            {/* hotspot pin */}
+            {/* hotspot pin with close-up of the actual table */}
             <div className="absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-              <div className="relative grid place-items-center">
-                <span className="absolute w-10 h-10 rounded-full bg-accent/40 animate-pulse-ring" />
-                <span className="w-4 h-4 rounded-full bg-accent ring-4 ring-white/80 shadow-lg" />
-                <span className="absolute -top-9 whitespace-nowrap bg-white text-ink text-[11px] font-bold px-2.5 py-1 rounded-full shadow">
+              <div className="relative flex flex-col items-center">
+                {/* close-up photo of the real table */}
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.4, type: "spring", stiffness: 240, damping: 22 }}
+                  className="relative -mb-1.5 w-32 h-24 sm:w-40 sm:h-28 rounded-2xl overflow-hidden ring-4 ring-white shadow-2xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={table.image} alt={table.label} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 ring-2 ring-accent rounded-2xl" />
+                  <span className="absolute bottom-1.5 left-1.5 bg-accent text-white text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded">
+                    {table.label}
+                  </span>
+                </motion.div>
+                {/* pulsing pin pointing down to floor */}
+                <div className="relative">
+                  <span className="absolute -inset-3 rounded-full bg-accent/30 animate-pulse-ring" />
+                  <span className="block w-4 h-4 rounded-full bg-accent ring-4 ring-white shadow-lg" />
+                </div>
+                <span className="mt-2 whitespace-nowrap bg-white text-ink text-[11px] font-bold px-2.5 py-1 rounded-full shadow">
                   {t("v360.here")}
                 </span>
               </div>

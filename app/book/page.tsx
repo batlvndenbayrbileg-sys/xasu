@@ -68,9 +68,9 @@ export default function BookPage() {
     setSubmitting(false);
     if (status === 401) { router.push("/login?redirect=/book"); return; }
     if (!ok) { setError(error ?? t("book.couldNotReserve")); toast.error(error ?? t("book.couldNotReserve")); return; }
-    toast.success(t("book.bookedToast"));
     reset();
-    router.push(`/pay?r=${data.id}`);
+    // Don't toast yet — booking isn't confirmed until deposit is paid.
+    router.push(`/booking/${data.id}/review`);
   }
 
   function dayLabel(d: { offset: number; dow: string }) {
