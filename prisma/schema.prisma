@@ -28,12 +28,31 @@ model User {
   reservations Reservation[]
 }
 
-/// Admin-controlled per-dish availability override. Dishes are otherwise
-/// defined statically in `lib/data.ts`; this table only stores overrides.
+/// Admin-controlled per-dish availability override. Static dishes (lib/data.ts)
+/// can be marked unavailable here; CustomDish (admin-added) live in their own table.
 model DishAvailability {
   dishId    String   @id
   available Boolean  @default(true)
   updatedAt DateTime @updatedAt
+}
+
+/// Admin-created dishes (not in the static catalog). Edited / removed freely.
+model CustomDish {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  category    String
+  image       String
+  calories    Int      @default(0)
+  prepMinutes Int      @default(10)
+  rating      Float    @default(4.7)
+  available   Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category])
 }
 
 /// Singleton — restaurant configuration. Row keyed `id = "default"`.
@@ -102,6 +121,52 @@ model Session {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+/// Restaurant staff (separate from User accounts — these are physical employees
+/// tracked by PIN, not necessarily app users).
+model Employee {
+  id         String   @id @default(cuid())
+  name       String
+  /// 4-6 digit PIN used at the clock-in terminal. Stored plain — low-risk
+  /// and the terminal is operated under supervision.
+  pin        String   @unique
+  role       String   @default("staff") // staff | server | cook | manager
+  /// Hourly wage in MNT (integer)
+  hourlyRate Int      @default(0)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  shifts     Shift[]
+  scheduled  ScheduledShift[]
+}
+
+/// One clock-in / clock-out pair. clockOut null while shift in progress.
+model Shift {
+  id         String    @id @default(cuid())
+  employeeId String
+  employee   Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  clockIn    DateTime
+  clockOut   DateTime?
+  note       String?
+  createdAt  DateTime  @default(now())
+
+  @@index([employeeId, clockIn])
+}
+
+/// Planned shift — admin can compare against actual Shift records.
+model ScheduledShift {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  date       String   // YYYY-MM-DD
+  startTime  String   // HH:mm
+  endTime    String   // HH:mm
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  @@index([employeeId, date])
+  @@index([date])
 }
 
 model Reservation {

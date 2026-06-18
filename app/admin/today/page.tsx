@@ -68,23 +68,23 @@ export default function AdminToday() {
       {/* Header */}
       <div className="flex items-end justify-between gap-3 flex-wrap">
         <div>
-          <p className="text-[12px] uppercase tracking-widest text-muted font-semibold">{data.today} · {new Date().toLocaleDateString("en-US", { weekday: "long" })}</p>
+          <p className="text-[12px] uppercase tracking-widest text-muted font-semibold">{data.today} · {new Date().toLocaleDateString("mn-MN", { weekday: "long" })}</p>
           <h1 className="font-display text-[28px] md:text-[34px] font-bold flex items-center gap-3">
-            Today
+            Өнөөдөр
             <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-600">
               <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" /><span className="relative rounded-full h-2 w-2 bg-emerald-500" /></span>
-              LIVE
+              ШУУД
             </span>
           </h1>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={load} disabled={refreshing}
             className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink transition">
-            <RefreshCw size={13} className={clsx(refreshing && "animate-spin")} /> Refresh
+            <RefreshCw size={13} className={clsx(refreshing && "animate-spin")} /> Сэргээх
           </button>
           <Link href="/admin/reservations/new"
             className="inline-flex items-center gap-1.5 bg-accent text-white font-semibold px-4 py-2 rounded-full shadow-glow hover:bg-accent-soft transition text-[13px]">
-            <Plus size={14} /> New booking
+            <Plus size={14} /> Шинэ захиалга
           </Link>
         </div>
       </div>

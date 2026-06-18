@@ -98,17 +98,20 @@ export default function AdminCalendar() {
       <div className="flex items-end justify-between gap-3 flex-wrap">
         <div>
           <h1 className="font-display text-[28px] md:text-[34px] font-bold inline-flex items-center gap-2">
-            <CalendarIcon size={24} className="text-accent" /> Calendar
+            <CalendarIcon size={24} className="text-accent" /> Календарь
           </h1>
-          <p className="text-muted text-[14px] mt-1">All bookings across days, with density heatmap.</p>
+          <p className="text-muted text-[14px] mt-1">Өдөр бүрийн захиалга, ачааллын heatmap.</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex gap-1 bg-white border border-line rounded-full p-1">
-            {(["month", "week"] as const).map((v) => (
-              <button key={v} onClick={() => setView(v)}
-                className={clsx("px-4 py-1.5 rounded-full text-[12px] font-bold uppercase tracking-wide transition",
-                  view === v ? "bg-accent text-white" : "text-muted hover:text-ink")}>{v}</button>
-            ))}
+            {(["month", "week"] as const).map((v) => {
+              const lbl = v === "month" ? "Сар" : "Долоо хоног";
+              return (
+                <button key={v} onClick={() => setView(v)}
+                  className={clsx("px-4 py-1.5 rounded-full text-[12px] font-bold uppercase tracking-wide transition",
+                    view === v ? "bg-accent text-white" : "text-muted hover:text-ink")}>{lbl}</button>
+              );
+            })}
           </div>
           <Link href="/admin/reservations/new"
             className="inline-flex items-center gap-1.5 bg-accent text-white font-semibold px-4 py-2 rounded-full shadow-glow text-[13px]">

@@ -9,10 +9,13 @@ import { useCart } from "@/lib/cart";
 import { useMounted } from "@/lib/useMounted";
 import { useI18n } from "@/lib/i18n";
 import { useSession } from "@/lib/useSession";
-import { DISHES } from "@/lib/data";
+import { DISHES, TABLES } from "@/lib/data";
 import { formatDishPrice, formatMnt } from "@/lib/payments";
-import { sendJson } from "@/lib/fetcher";
+import { sendJson, getJson } from "@/lib/fetcher";
 import { toast } from "@/lib/toast";
+import { useTableSession } from "@/lib/table-session";
+import { useEffect } from "react";
+import { QrCode, MapPin } from "lucide-react";
 
 export default function CartPage() {
   const router = useRouter();
@@ -22,7 +25,18 @@ export default function CartPage() {
   const items = useCart((s) => s.items);
   const setQty = useCart((s) => s.setQty);
   const remove = useCart((s) => s.remove);
+  const tableId = useTableSession((s) => s.tableId);
+  const tableSource = useTableSession((s) => s.source);
+  const setTable = useTableSession((s) => s.setTable);
+  const clearTable = useTableSession((s) => s.clear);
   const [submitting, setSubmitting] = useState(false);
+  const [tablePickerOpen, setTablePickerOpen] = useState(false);
+  const [availableTables, setAvailableTables] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    if (!tablePickerOpen || availableTables) return;
+    getJson<any[]>("/api/tables").then(({ data }) => setAvailableTables(data ?? []));
+  }, [tablePickerOpen, availableTables]);
 
   const lines = useMemo(() => items
     .map((it) => {
@@ -40,9 +54,11 @@ export default function CartPage() {
   async function checkout() {
     if (!user) { router.push("/login?redirect=/cart"); return; }
     if (lines.length === 0) return;
+    if (!tableId) { toast.error("Эхлээд ширээгээ сонгоно уу"); setTablePickerOpen(true); return; }
     setSubmitting(true);
     const { ok, status, data, error } = await sendJson<any>("/api/payments/cart", "POST", {
       amount: total,
+      tableId,
       items: lines.map((l) => ({ id: l.id, qty: l.qty, unit: l.unit })),
     });
     if (status === 401) { router.push("/login?redirect=/cart"); return; }
@@ -134,6 +150,27 @@ export default function CartPage() {
             {/* RIGHT — totals (sticky on desktop) */}
             <div>
               <div className="lg:sticky lg:top-28 space-y-3">
+                {/* Table card */}
+                <div className="bg-white border border-line rounded-3xl p-5 shadow-card">
+                  <div className="flex items-center gap-2.5">
+                    <span className={`w-9 h-9 rounded-xl grid place-items-center ${tableSource === "qr" ? "bg-emerald-50 text-emerald-700" : "bg-accent/10 text-accent"}`}>
+                      {tableSource === "qr" ? <QrCode size={16} /> : <MapPin size={16} />}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[11px] uppercase tracking-widest font-bold text-muted">Ширээ</div>
+                      <div className="font-semibold text-[15px] leading-tight">
+                        {tableId ? tableId : "Сонгоогүй"}
+                        {tableSource === "qr" && <span className="ml-1.5 text-[10px] text-emerald-700 font-bold">· QR-аас</span>}
+                      </div>
+                    </div>
+                    {tableSource !== "qr" && (
+                      <button onClick={() => setTablePickerOpen(true)} className="text-[12px] font-bold text-accent">
+                        {tableId ? "Солих" : "Сонгох"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
                 <div className="bg-white border border-line rounded-3xl p-5 md:p-6 shadow-card">
                   <h3 className="font-display text-[18px] font-bold">Захиалгын хураангуй</h3>
                   <dl className="mt-4 space-y-2.5 text-[14px]">
@@ -167,6 +204,52 @@ export default function CartPage() {
           </div>
         )}
       </div>
+
+      {tablePickerOpen && (
+        <div className="fixed inset-0 z-50 bg-black/55 grid place-items-center p-4" onClick={() => setTablePickerOpen(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="bg-white rounded-3xl shadow-2xl w-full max-w-xl max-h-[80vh] overflow-hidden flex flex-col">
+            <div className="px-5 py-4 border-b border-line">
+              <h3 className="font-display text-[20px] font-bold">Ширээ сонгох</h3>
+              <p className="text-[12.5px] text-muted mt-1">Зайнаас захиалж байгаа бол ширээ сонгож баталгаажуулна уу. Чөлөөтэй ширээ л харагдана.</p>
+            </div>
+            <div className="overflow-y-auto p-4 space-y-4">
+              {!availableTables ? (
+                <div className="h-32 grid place-items-center"><Loader2 className="animate-spin text-neutral-400" /></div>
+              ) : (
+                ["Indoor", "Outdoor", "Garden Terrace", "Private Meeting"].map((zone) => {
+                  const inZone = availableTables.filter((t: any) => t.zone === zone && t.status !== "occupied");
+                  if (inZone.length === 0) return null;
+                  return (
+                    <div key={zone}>
+                      <div className="text-[11px] uppercase tracking-widest font-bold text-muted mb-2">{zone}</div>
+                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                        {inZone.map((t: any) => {
+                          const selected = t.id === tableId;
+                          return (
+                            <button key={t.id} onClick={() => { setTable(t.id, "manual"); setTablePickerOpen(false); toast.success(`${t.label} сонгогдлоо`); }}
+                              className={`rounded-xl border px-3 py-3 text-left transition ${selected ? "border-accent bg-accent/5" : "border-line hover:border-accent"}`}>
+                              <div className="font-bold text-[14px]">{t.label}</div>
+                              <div className="text-[11px] text-muted">{t.seats} суудал</div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+            <div className="px-5 py-3 border-t border-line flex justify-between items-center">
+              {tableId && (
+                <button onClick={() => { clearTable(); setTablePickerOpen(false); }} className="text-[12.5px] text-muted hover:text-red-500">
+                  Ширээ цуцлах
+                </button>
+              )}
+              <button onClick={() => setTablePickerOpen(false)} className="ml-auto px-4 py-2 rounded-lg border border-line text-[13px] font-semibold">Хаах</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

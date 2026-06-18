@@ -42,12 +42,12 @@ export default function AdminAudit() {
       <div className="flex items-end justify-between gap-3 flex-wrap">
         <div>
           <h1 className="font-display text-[28px] md:text-[34px] font-bold inline-flex items-center gap-2">
-            <Shield size={22} className="text-accent" /> Audit log
+            <Shield size={22} className="text-accent" /> Үйлдлийн лог
           </h1>
-          <p className="text-muted text-[14px] mt-1">Every admin change recorded with before/after diff. Tamper-evident.</p>
+          <p className="text-muted text-[14px] mt-1">Бүх admin өөрчлөлтүүд өмнөх/дараах төлөвтэй хадгалагдана.</p>
         </div>
         <button onClick={load} className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink transition">
-          <RefreshCw size={13} /> Refresh
+          <RefreshCw size={13} /> Сэргээх
         </button>
       </div>
 

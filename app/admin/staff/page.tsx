@@ -52,13 +52,13 @@ export default function AdminStaff() {
       <div className="flex items-end justify-between gap-3 flex-wrap">
         <div>
           <h1 className="font-display text-[28px] md:text-[34px] font-bold inline-flex items-center gap-2">
-            <Shield size={22} className="text-accent" /> Staff
+            <Shield size={22} className="text-accent" /> Ажилчид (системийн)
           </h1>
-          <p className="text-muted text-[14px] mt-1">Invite teammates with the right level of access. Only ADMIN can see this page.</p>
+          <p className="text-muted text-[14px] mt-1">Системд нэвтрэх эрхтэй ажилчдыг урих. Зөвхөн ADMIN энэ хуудсыг харна.</p>
         </div>
         <button onClick={() => setInviting(true)}
           className="inline-flex items-center gap-1.5 bg-accent text-white font-semibold px-4 py-2 rounded-full shadow-glow text-[13px]">
-          <UserPlus size={14} /> Invite staff
+          <UserPlus size={14} /> Урих
         </button>
       </div>
 

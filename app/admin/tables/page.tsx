@@ -66,10 +66,10 @@ export default function AdminTables() {
   }
 
   async function deleteTable(id: string) {
-    if (!confirm("Delete this table? This is permanent.")) return;
+    if (!confirm("Энэ ширээг устгах уу? Буцаах боломжгүй.")) return;
     const { ok } = await sendJson(`/api/admin/tables/${id}`, "DELETE" as any);
-    if (!ok) { toast.error("Delete failed"); return; }
-    toast.success("Deleted");
+    if (!ok) { toast.error("Устгаж чадсангүй"); return; }
+    toast.success("Устгалаа");
     load();
   }
 
@@ -77,13 +77,13 @@ export default function AdminTables() {
     <div className="max-w-7xl space-y-5">
       <div className="flex items-end justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="font-display text-[28px] md:text-[34px] font-bold">Floor & tables</h1>
-          <p className="text-muted text-[14px] mt-1">Drag tables to lay out your floor. Click to edit a table.</p>
+          <h1 className="font-display text-[28px] md:text-[34px] font-bold">Танхим & Ширээ</h1>
+          <p className="text-muted text-[14px] mt-1">Ширээг чирж байрлуул. Засахын тулд хоёр товш.</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => setCreating(true)}
             className="inline-flex items-center gap-1.5 bg-accent text-white font-semibold px-4 py-2 rounded-full shadow-glow text-[13px]">
-            <Plus size={14} /> Add table
+            <Plus size={14} /> Ширээ нэмэх
           </button>
         </div>
       </div>
@@ -104,20 +104,20 @@ export default function AdminTables() {
         <div className="bg-white dark:bg-[#14161b] border border-line rounded-2xl p-3 md:p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="text-[11px] font-bold uppercase tracking-widest text-muted inline-flex items-center gap-1.5">
-              <Move size={11} /> Drag to position · {zoneTables.length} tables
+              <Move size={11} /> Чирж байрлуул · {zoneTables.length} ширээ
             </div>
             {dirty && (
               <button onClick={savePositions} disabled={saving}
                 className="inline-flex items-center gap-1.5 bg-accent text-white font-semibold px-3.5 py-1.5 rounded-full text-[12px] shadow-glow hover:bg-accent-soft transition disabled:opacity-50">
-                {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />} Save layout
+                {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />} Хадгалах
               </button>
             )}
           </div>
 
           <div ref={planRef} onPointerMove={onPointerMove} onPointerUp={onPointerUp}
-            className="relative h-[60vh] min-h-[420px] rounded-xl bg-gradient-to-br from-[#0c1018] to-[#1a1f2c] overflow-hidden select-none"
+            className="relative h-[60vh] min-h-[420px] rounded-xl bg-white border border-neutral-200 overflow-hidden select-none"
           >
-            <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.7) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.7) 1px,transparent 1px)", backgroundSize: "5% 5%" }} />
+            <div className="absolute inset-0 opacity-[0.6]" style={{ backgroundImage: "linear-gradient(rgba(0,0,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px)", backgroundSize: "5% 5%" }} />
 
             {zoneTables.map((tbl) => {
               const size = tbl.shape === "rect" || tbl.shape === "booth" ? "w-16 h-10" : "w-12 h-12";
@@ -147,25 +147,25 @@ export default function AdminTables() {
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-muted">
-            <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-gradient-to-br from-[#5b3a22] to-[#2e1c10]" /> Round (wood)</span>
-            <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-gradient-to-br from-[#aea49a] to-[#7c736b]" /> Square/rect (marble)</span>
-            <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-gradient-to-br from-[#7a3a52] to-[#3f1a2a]" /> Booth (velvet)</span>
-            <span className="ml-auto">Double-click to edit · drag to move</span>
+            <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded-full bg-gradient-to-br from-[#5b3a22] to-[#2e1c10]" /> Дугуй (мод)</span>
+            <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-gradient-to-br from-[#aea49a] to-[#7c736b]" /> Дөрвөлжин (гантиг)</span>
+            <span className="inline-flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-gradient-to-br from-[#7a3a52] to-[#3f1a2a]" /> Бүхээг</span>
+            <span className="ml-auto">Засах: 2 удаа товш · Зөөх: чир</span>
           </div>
         </div>
       )}
 
       {/* Per-table list */}
       <div className="bg-white dark:bg-[#14161b] border border-line rounded-2xl">
-        <h3 className="text-[11px] uppercase tracking-widest font-bold text-muted px-5 pt-5">All {zone} tables · {zoneTables.length}</h3>
+        <h3 className="text-[11px] uppercase tracking-widest font-bold text-muted px-5 pt-5">{zone} бүсийн ширээ · {zoneTables.length}</h3>
         <ul className="mt-2 divide-y divide-line">
           {zoneTables.map((t) => (
             <li key={t.id} className="px-5 py-3 flex items-center gap-3 text-[13px]">
               <span className="font-mono font-bold w-12">{t.label}</span>
-              <span className="text-muted text-[12px] inline-flex items-center gap-1"><UsersIcon size={11} /> {t.seats} seats</span>
+              <span className="text-muted text-[12px] inline-flex items-center gap-1"><UsersIcon size={11} /> {t.seats} суудал</span>
               <span className="text-muted text-[12px] inline-flex items-center gap-1"><Shapes size={11} /> {t.shape}</span>
               <span className="text-muted text-[11px] truncate hidden md:inline-flex items-center gap-1"><MapPin size={11} /> {t.position}</span>
-              <button onClick={() => setEditing(t)} className="ml-auto text-[12px] font-bold text-accent">Edit</button>
+              <button onClick={() => setEditing(t)} className="ml-auto text-[12px] font-bold text-accent">Засах</button>
               <button onClick={() => deleteTable(t.id)} className="text-red-500 hover:text-red-700"><Trash2 size={14} /></button>
             </li>
           ))}
@@ -205,17 +205,17 @@ function TableEditor({ table, onClose, onSaved, defaultZone }: { table: Table | 
   async function save() {
     setBusy(true);
     if (isNew) {
-      if (!form.id || !form.label) { toast.error("ID and label required"); setBusy(false); return; }
+      if (!form.id || !form.label) { toast.error("ID болон Нэр заавал шаардлагатай"); setBusy(false); return; }
       const { ok, error } = await sendJson("/api/admin/tables", "POST", { ...form, x: 50, y: 50 });
       setBusy(false);
-      if (!ok) { toast.error(error === "id_taken" ? "Table ID already exists" : "Create failed"); return; }
-      toast.success("Created");
+      if (!ok) { toast.error(error === "id_taken" ? "Ширээний ID давхардсан байна" : "Үүсгэж чадсангүй"); return; }
+      toast.success("Нэмлээ");
       onSaved();
     } else {
       const { ok, error } = await sendJson(`/api/admin/tables/${table!.id}`, "PATCH" as any, form);
       setBusy(false);
-      if (!ok) { toast.error(error ?? "Save failed"); return; }
-      toast.success("Updated");
+      if (!ok) { toast.error(error ?? "Хадгалж чадсангүй"); return; }
+      toast.success("Шинэчиллээ");
       onSaved();
     }
   }
@@ -224,45 +224,45 @@ function TableEditor({ table, onClose, onSaved, defaultZone }: { table: Table | 
     <div className="fixed inset-0 z-50 bg-black/55 grid place-items-center p-4" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="bg-white dark:bg-[#14161b] rounded-2xl shadow-2xl w-full max-w-lg p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-display text-[20px] font-bold">{isNew ? "Add table" : `Edit ${table!.label}`}</h3>
+          <h3 className="font-display text-[20px] font-bold">{isNew ? "Шинэ ширээ" : `${table!.label} ширээг засах`}</h3>
           <button onClick={onClose} className="text-muted hover:text-ink"><X size={18} /></button>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <Field label="ID *"><input value={form.id} onChange={(e) => update("id", e.target.value)} className="input" disabled={!isNew} placeholder="t13" /></Field>
-          <Field label="Label *"><input value={form.label} onChange={(e) => update("label", e.target.value)} className="input" placeholder="T-13" /></Field>
-          <Field label="Zone">
+          <Field label="Нэр *"><input value={form.label} onChange={(e) => update("label", e.target.value)} className="input" placeholder="T-13" /></Field>
+          <Field label="Бүс">
             <select value={form.zone} onChange={(e) => update("zone", e.target.value)} className="input">
               {ZONES.map((z) => <option key={z} value={z}>{z}</option>)}
             </select>
           </Field>
-          <Field label="Shape">
+          <Field label="Хэлбэр">
             <select value={form.shape} onChange={(e) => update("shape", e.target.value)} className="input">
               {SHAPES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </Field>
-          <Field label="Seats"><input type="number" min={1} value={form.seats} onChange={(e) => update("seats", parseInt(e.target.value) || 1)} className="input" /></Field>
-          <Field label="Rotation (°)"><input type="number" value={form.rotation} onChange={(e) => update("rotation", parseFloat(e.target.value) || 0)} className="input" /></Field>
+          <Field label="Суудал"><input type="number" min={1} value={form.seats} onChange={(e) => update("seats", parseInt(e.target.value) || 1)} className="input" /></Field>
+          <Field label="Эргэлт (°)"><input type="number" value={form.rotation} onChange={(e) => update("rotation", parseFloat(e.target.value) || 0)} className="input" /></Field>
           <div className="col-span-2">
-            <Field label="Position description"><input value={form.position} onChange={(e) => update("position", e.target.value)} className="input" placeholder="Window-side · Quiet corner" /></Field>
+            <Field label="Байршлын тайлбар"><input value={form.position} onChange={(e) => update("position", e.target.value)} className="input" placeholder="Цонхны хажуу · Чимээгүй булан" /></Field>
           </div>
           <div className="col-span-2">
-            <Field label="Image URL"><input value={form.image} onChange={(e) => update("image", e.target.value)} className="input" placeholder="https://…" /></Field>
+            <Field label="Зургийн URL"><input value={form.image} onChange={(e) => update("image", e.target.value)} className="input" placeholder="https://…" /></Field>
           </div>
           {!isNew && (
             <div className="col-span-2">
               <label className="flex items-center gap-2 text-[13px]">
                 <input type="checkbox" checked={form.disabled} onChange={(e) => update("disabled", e.target.checked)} />
-                Temporarily disabled (hide from bookings)
+                Түр идэвхгүй болгох (захиалгад харагдахгүй)
               </label>
             </div>
           )}
         </div>
 
         <div className="flex justify-end gap-2 mt-5">
-          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-line text-[13px] font-semibold">Cancel</button>
+          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-line text-[13px] font-semibold">Болих</button>
           <button onClick={save} disabled={busy} className="inline-flex items-center gap-1.5 bg-accent text-white px-5 py-2 rounded-lg font-semibold text-[13px] shadow-glow disabled:opacity-50">
-            {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} {isNew ? "Create" : "Save"}
+            {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} {isNew ? "Нэмэх" : "Хадгалах"}
           </button>
         </div>
       </div>

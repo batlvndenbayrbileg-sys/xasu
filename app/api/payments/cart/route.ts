@@ -14,16 +14,17 @@ export async function POST(req: Request) {
   let body: any;
   try { body = await req.json(); } catch { return NextResponse.json({ error: "bad_request" }, { status: 400 }); }
 
-  const { amount, items } = body ?? {};
+  const { amount, items, tableId } = body ?? {};
   if (!Number.isFinite(amount) || amount <= 0) return NextResponse.json({ error: "bad_amount" }, { status: 400 });
   if (!Array.isArray(items) || items.length === 0) return NextResponse.json({ error: "empty_cart" }, { status: 400 });
+  if (!tableId || typeof tableId !== "string") return NextResponse.json({ error: "missing_table" }, { status: 400 });
 
   const idempotencyKey = `cart_${user.id}_${randomUUID().slice(0, 8)}`;
 
   try {
     const intent = await createPaymentIntent({
       amount,
-      metadata: { userId: user.id, kind: "cart", items: JSON.stringify(items.slice(0, 50)) },
+      metadata: { userId: user.id, kind: "cart", tableId, items: JSON.stringify(items.slice(0, 50)) },
       idempotencyKey,
     });
 

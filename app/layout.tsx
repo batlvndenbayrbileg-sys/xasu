@@ -10,6 +10,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import ScrollProgress from "@/components/ScrollProgress";
 import SmoothScroll from "@/components/SmoothScroll";
+import TableFromUrl from "@/components/TableFromUrl";
+import { Suspense } from "react";
 
 const noFlashTheme = `(function(){try{var t=localStorage.getItem('gg_theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme:dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
 
@@ -56,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <I18nProvider>
             <SmoothScroll />
             <ScrollProgress />
+            <Suspense fallback={null}><TableFromUrl /></Suspense>
             <SiteHeader />
             <main className="flex-1 w-full pb-16 md:pb-0">{children}</main>
             <Footer />

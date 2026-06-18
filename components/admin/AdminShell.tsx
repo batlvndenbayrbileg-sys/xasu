@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users, Calendar, Settings, Shield, Map, UserCog, Bell } from "lucide-react";
+import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users, Calendar, Settings, Shield, Map, UserCog, Bell, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getJson } from "@/lib/fetcher";
 import clsx from "clsx";
@@ -10,18 +10,19 @@ import { sendJson } from "@/lib/fetcher";
 import type { PublicUser } from "@/lib/auth";
 
 const NAV = [
-  { href: "/admin/today", label: "Today", icon: Activity },
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/calendar", label: "Calendar", icon: Calendar },
-  { href: "/admin/reservations", label: "Reservations", icon: CalendarRange },
-  { href: "/admin/customers", label: "Customers", icon: Users },
-  { href: "/admin/payments", label: "Payments", icon: CreditCard },
-  { href: "/admin/tables", label: "Tables", icon: Map },
-  { href: "/admin/menu", label: "Menu", icon: UtensilsCrossed },
-  { href: "/admin/reports", label: "Reports", icon: BarChart3 },
-  { href: "/admin/staff", label: "Staff", icon: UserCog },
-  { href: "/admin/audit", label: "Audit log", icon: Shield },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+  { href: "/admin/today", label: "Өнөөдөр", icon: Activity },
+  { href: "/admin", label: "Хяналтын самбар", icon: LayoutDashboard, exact: true },
+  { href: "/admin/calendar", label: "Календарь", icon: Calendar },
+  { href: "/admin/reservations", label: "Захиалга", icon: CalendarRange },
+  { href: "/admin/customers", label: "Үйлчлүүлэгчид", icon: Users },
+  { href: "/admin/payments", label: "Төлбөр", icon: CreditCard },
+  { href: "/admin/tables", label: "Ширээ", icon: Map },
+  { href: "/admin/menu", label: "Цэс", icon: UtensilsCrossed },
+  { href: "/admin/timesheet", label: "Цаг бүртгэл", icon: Clock },
+  { href: "/admin/reports", label: "Тайлан", icon: BarChart3 },
+  { href: "/admin/staff", label: "Ажилчид", icon: UserCog },
+  { href: "/admin/audit", label: "Үйлдлийн лог", icon: Shield },
+  { href: "/admin/settings", label: "Тохиргоо", icon: Settings },
 ];
 
 function BellButton({ open, setOpen, count, recent }: { open: boolean; setOpen: (b: boolean) => void; count: number; recent: any[] }) {
@@ -35,11 +36,11 @@ function BellButton({ open, setOpen, count, recent }: { open: boolean; setOpen: 
       {open && (
         <div className="absolute right-0 top-12 w-80 bg-white dark:bg-[#14161b] border border-line rounded-2xl shadow-2xl overflow-hidden">
           <div className="px-4 py-3 border-b border-line flex items-center justify-between">
-            <span className="text-[11px] uppercase tracking-widest font-bold text-muted">Recent activity</span>
-            <Link href="/admin/audit" onClick={() => setOpen(false)} className="text-[11px] font-bold text-accent">View all →</Link>
+            <span className="text-[11px] uppercase tracking-widest font-bold text-muted">Сүүлийн үйлдлүүд</span>
+            <Link href="/admin/audit" onClick={() => setOpen(false)} className="text-[11px] font-bold text-accent">Бүгдийг үзэх →</Link>
           </div>
           {recent.length === 0 ? (
-            <div className="h-24 grid place-items-center text-muted text-[12px]">No activity yet</div>
+            <div className="h-24 grid place-items-center text-muted text-[12px]">Үйл ажиллагаа алга</div>
           ) : (
             <ul className="max-h-96 overflow-y-auto divide-y divide-line">
               {recent.map((r) => (
@@ -85,7 +86,7 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
         <div className="px-5 py-5 border-b border-line">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Xasu Admin" className="h-9 w-auto" />
-          <p className="mt-2 text-[11px] uppercase tracking-widest text-muted font-semibold">Admin Panel</p>
+          <p className="mt-2 text-[11px] uppercase tracking-widest text-muted font-semibold">Удирдлагын самбар</p>
         </div>
 
         <nav className="flex-1 p-3 space-y-1">
@@ -104,7 +105,7 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
 
         <div className="p-3 border-t border-line space-y-2">
           <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] text-muted hover:bg-neutral-100 dark:hover:bg-neutral-100 transition">
-            <Home size={15} /> View site
+            <Home size={15} /> Вэбсайт үзэх
           </Link>
           <div className="flex items-center gap-2.5 px-3 py-2">
             <div className="w-8 h-8 rounded-full bg-accent text-white grid place-items-center font-bold text-[12px]">
@@ -126,7 +127,7 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
         <header className="md:hidden sticky top-0 z-40 bg-white dark:bg-[#14161b] border-b border-line px-4 h-14 flex items-center justify-between">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Xasu Admin" className="h-8 w-auto" />
-          <span className="text-[11px] uppercase tracking-widest text-muted font-semibold">Admin</span>
+          <span className="text-[11px] uppercase tracking-widest text-muted font-semibold">Удирдлага</span>
           <div className="flex items-center gap-2">
             <BellButton open={bellOpen} setOpen={setBellOpen} count={recent.length} recent={recent} />
             <button onClick={logout} aria-label="Sign out" className="text-muted"><LogOut size={15} /></button>

@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { notFound, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Heart, Flame, Timer, Star, ArrowRight, ShoppingBasket } from "lucide-react";
+import { ChevronLeft, Heart, Flame, Timer, Star, ArrowRight, ShoppingBasket, Minus, Plus } from "lucide-react";
 import clsx from "clsx";
 import { DISHES } from "@/lib/data";
 import { useI18n } from "@/lib/i18n";
@@ -10,6 +11,7 @@ import { formatDishPrice } from "@/lib/payments";
 import { useFavorites } from "@/lib/favorites";
 import { useCart } from "@/lib/cart";
 import { useMounted } from "@/lib/useMounted";
+import { toast } from "@/lib/toast";
 
 const INGREDIENTS = [
   { emoji: "🥩", label: "Prime Filet Mignon" },
@@ -31,11 +33,19 @@ export default function DishDetail({ params }: { params: { id: string } }) {
   const ids = useFavorites((s) => s.ids);
   const toggle = useFavorites((s) => s.toggle);
   const addToCart = useCart((s) => s.add);
-  const inCart = useCart((s) => s.items.some((x) => x.id === params.id));
+  const setQty = useCart((s) => s.setQty);
+  const currentQty = useCart((s) => s.items.find((x) => x.id === params.id)?.qty ?? 0);
+  const inCart = currentQty > 0;
   const mounted = useMounted();
+  const [qty, setQtyLocal] = useState(1);
   const dish = DISHES.find((d) => d.id === params.id);
   if (!dish) notFound();
   const liked = mounted && ids.includes(dish.id);
+
+  function addNTimes() {
+    for (let i = 0; i < qty; i++) addToCart(dish!.id);
+    toast.success(`Сагсанд ${qty} ширхэг нэмлээ`);
+  }
 
   const pairings = DISHES.filter((d) => d.id !== dish.id).slice(0, 3);
 
@@ -93,15 +103,32 @@ export default function DishDetail({ params }: { params: { id: string } }) {
             </div>
 
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
-              <button onClick={() => addToCart(dish.id)}
+              <div className="inline-flex items-center bg-white border border-line rounded-full overflow-hidden">
+                <button onClick={() => setQtyLocal(Math.max(1, qty - 1))}
+                  aria-label="Хасах"
+                  className="w-12 h-[58px] grid place-items-center hover:bg-neutral-50 transition disabled:opacity-40"
+                  disabled={qty <= 1}>
+                  <Minus size={16} />
+                </button>
+                <span className="min-w-[40px] text-center font-bold text-[16px] select-none">{qty}</span>
+                <button onClick={() => setQtyLocal(Math.min(99, qty + 1))}
+                  aria-label="Нэмэх"
+                  className="w-12 h-[58px] grid place-items-center hover:bg-neutral-50 transition">
+                  <Plus size={16} />
+                </button>
+              </div>
+              <button onClick={addNTimes}
                 className="inline-flex items-center justify-center gap-2 bg-accent text-white font-semibold px-8 py-4 rounded-full shadow-glow hover:bg-accent-soft hover:gap-3 transition-all">
-                <ShoppingBasket size={18} /> {inCart ? "Сагсанд +1" : "Сагсанд нэмэх"}
+                <ShoppingBasket size={18} /> Сагсанд {qty} ширхэг нэмэх
               </button>
               <Link href="/book"
                 className="inline-flex items-center justify-center gap-2 font-semibold px-8 py-4 rounded-full bg-white border border-line hover:border-accent hover:text-accent transition">
                 {t("dish.reserve")} <ArrowRight size={18} />
               </Link>
             </div>
+            {inCart && (
+              <p className="mt-3 text-[12.5px] text-muted">Сагсанд одоо <strong className="text-ink">{currentQty}</strong> ширхэг байна.</p>
+            )}
           </div>
         </div>
 

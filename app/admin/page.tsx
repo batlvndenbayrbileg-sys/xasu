@@ -31,32 +31,32 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6 max-w-7xl">
       <div>
-        <h1 className="font-display text-[28px] md:text-[34px] font-bold">Dashboard</h1>
-        <p className="text-muted text-[14px] mt-1">Today's bookings, this week's revenue, and recent activity at a glance.</p>
+        <h1 className="font-display text-[28px] md:text-[34px] font-bold">Хяналтын самбар</h1>
+        <p className="text-muted text-[14px] mt-1">Өнөөдрийн захиалга, долоо хоногийн орлого, сүүлийн үйл ажиллагаа.</p>
       </div>
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Kpi icon={<CalendarRange size={16} />} label="Today's bookings" value={stats.todayCount} accent="emerald" />
-        <Kpi icon={<Users size={16} />} label="This week" value={stats.weekCount} accent="sky" />
-        <Kpi icon={<CreditCard size={16} />} label="Revenue today" value={formatMnt(stats.revenueToday)} accent="amber" />
-        <Kpi icon={<TrendingUp size={16} />} label="Revenue (7d)" value={formatMnt(stats.revenueWeek)} accent="accent" />
+        <Kpi icon={<CalendarRange size={16} />} label="Өнөөдрийн захиалга" value={stats.todayCount} accent="emerald" />
+        <Kpi icon={<Users size={16} />} label="Энэ долоо хоног" value={stats.weekCount} accent="sky" />
+        <Kpi icon={<CreditCard size={16} />} label="Өнөөдрийн орлого" value={formatMnt(stats.revenueToday)} accent="amber" />
+        <Kpi icon={<TrendingUp size={16} />} label="Орлого (7 хоног)" value={formatMnt(stats.revenueWeek)} accent="accent" />
       </div>
 
       {/* Two-column: revenue chart + status mix */}
       <div className="grid lg:grid-cols-[2fr_1fr] gap-4">
-        <Card title="Daily revenue · last 7 days">
+        <Card title="Өдрийн орлого · сүүлийн 7 хоног">
           <RevenueChart data={stats.dailyRevenue} />
         </Card>
-        <Card title="Status mix · this week">
+        <Card title="Захиалгын төлөв · энэ долоо хоног">
           <StatusMix items={stats.statusMix} total={stats.weekCount} />
         </Card>
       </div>
 
       {/* Recent reservations */}
       <Card
-        title="Recent reservations"
-        action={<Link href="/admin/reservations" className="text-[13px] font-semibold text-accent inline-flex items-center gap-1">View all <ArrowRight size={13} /></Link>}
+        title="Сүүлийн захиалгууд"
+        action={<Link href="/admin/reservations" className="text-[13px] font-semibold text-accent inline-flex items-center gap-1">Бүгдийг үзэх <ArrowRight size={13} /></Link>}
       >
         <ul className="divide-y divide-line">
           {stats.recent.map((r) => (
@@ -139,7 +139,7 @@ function StatusMix({ items, total }: { items: { status: string; count: number }[
   };
   return (
     <div className="space-y-2">
-      {items.length === 0 && <p className="text-[13px] text-muted">No data yet.</p>}
+      {items.length === 0 && <p className="text-[13px] text-muted">Одоохондоо мэдээлэл алга.</p>}
       {items.map((it) => {
         const pct = total ? Math.round((it.count / total) * 100) : 0;
         return (

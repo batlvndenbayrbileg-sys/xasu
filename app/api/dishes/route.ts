@@ -5,17 +5,23 @@ import type { Category } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-/** Public dish list. Hides any dish admin marked unavailable. */
+/** Public dish list. Combines static catalog (lib/data.ts) with admin-added
+ *  custom dishes from the database, respecting availability overrides. */
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const category = url.searchParams.get("category") as Category | null;
 
-  // Admin overrides (only "unavailable" entries matter — default is available)
-  const hidden = new Set(
-    (await prisma.dishAvailability.findMany({ where: { available: false } }))
-      .map((r) => r.dishId),
-  );
+  const [hiddenRows, customs] = await Promise.all([
+    prisma.dishAvailability.findMany({ where: { available: false } }),
+    prisma.customDish.findMany({ where: { available: true }, orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] }),
+  ]);
+  const hidden = new Set(hiddenRows.map((r) => r.dishId));
   const visible = DISHES.filter((d) => !hidden.has(d.id));
-  const data = category ? visible.filter((d) => d.category === category) : visible;
+  const customMapped = customs.map((c) => ({
+    id: c.id, name: c.name, price: c.price, rating: c.rating, image: c.image,
+    category: c.category as Category, calories: c.calories, prepMinutes: c.prepMinutes, description: c.description,
+  }));
+  const all = [...visible, ...customMapped];
+  const data = category ? all.filter((d) => d.category === category) : all;
   return NextResponse.json({ data });
 }

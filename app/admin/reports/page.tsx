@@ -27,15 +27,15 @@ export default function AdminReports() {
   return (
     <div className="max-w-7xl space-y-6">
       <div>
-        <h1 className="font-display text-[28px] md:text-[34px] font-bold">Reports</h1>
-        <p className="text-muted text-[14px] mt-1">Weekly revenue, status breakdown, payment health.</p>
+        <h1 className="font-display text-[28px] md:text-[34px] font-bold">Тайлан</h1>
+        <p className="text-muted text-[14px] mt-1">7 хоногийн орлого, төлвийн задаргаа, төлбөрийн байдал.</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Tile label="Today's revenue" value={formatMnt(s.revenueToday)} icon={<CreditCard size={15} />} tint="emerald" />
-        <Tile label="7-day revenue" value={formatMnt(s.revenueWeek)} icon={<TrendingUp size={15} />} tint="accent" />
-        <Tile label="Daily average" value={formatMnt(weekAvg)} icon={<CalendarRange size={15} />} tint="sky" />
-        <Tile label="Best day" value={bestDay ? `${bestDay.date.slice(5)} · ${formatMnt(bestDay.total)}` : "—"} icon={<TrendingUp size={15} />} tint="amber" />
+        <Tile label="Өнөөдрийн орлого" value={formatMnt(s.revenueToday)} icon={<CreditCard size={15} />} tint="emerald" />
+        <Tile label="7 хоногийн орлого" value={formatMnt(s.revenueWeek)} icon={<TrendingUp size={15} />} tint="accent" />
+        <Tile label="Өдрийн дундаж" value={formatMnt(weekAvg)} icon={<CalendarRange size={15} />} tint="sky" />
+        <Tile label="Хамгийн их өдөр" value={bestDay ? `${bestDay.date.slice(5)} · ${formatMnt(bestDay.total)}` : "—"} icon={<TrendingUp size={15} />} tint="amber" />
       </div>
 
       <Card title="Revenue trend · last 7 days">

@@ -57,8 +57,8 @@ export default function AdminSettings() {
   return (
     <div className="max-w-7xl space-y-5 pb-24">
       <div>
-        <h1 className="font-display text-[28px] md:text-[34px] font-bold">Settings</h1>
-        <p className="text-muted text-[14px] mt-1">Operating hours, deposit policy, contact, blackout dates. Live preview on the right.</p>
+        <h1 className="font-display text-[28px] md:text-[34px] font-bold">Тохиргоо</h1>
+        <p className="text-muted text-[14px] mt-1">Ажиллах цаг, депозит, холбоо барих, хаалттай өдрүүд. Баруун талд урьдчилан үзэх.</p>
       </div>
 
       <div className="grid lg:grid-cols-[1.5fr_1fr] gap-5">

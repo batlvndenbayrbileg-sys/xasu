@@ -54,12 +54,12 @@ export default function AdminReservations() {
     <div className="max-w-7xl space-y-5">
       <div className="flex items-end justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="font-display text-[28px] md:text-[34px] font-bold">Reservations</h1>
-          <p className="text-muted text-[14px] mt-1">All bookings, filterable. Click a status pill to update.</p>
+          <h1 className="font-display text-[28px] md:text-[34px] font-bold">Захиалга</h1>
+          <p className="text-muted text-[14px] mt-1">Бүх захиалга. Төлвийн товчоор төлвийг шинэчилнэ.</p>
         </div>
         <div className="flex items-center gap-2">
           <button onClick={load} className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink transition">
-            <RefreshCw size={13} /> Refresh
+            <RefreshCw size={13} /> Сэргээх
           </button>
           <button onClick={() => rows && downloadCsv(rows.map((r) => ({
             id: r.id, date: r.date, time: r.time, table: r.tableId, zone: r.zone,
@@ -69,11 +69,11 @@ export default function AdminReservations() {
           })), `reservations-${new Date().toISOString().slice(0, 10)}.csv`)}
             disabled={!rows || rows.length === 0}
             className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-muted hover:text-ink transition disabled:opacity-40">
-            <Download size={13} /> Export CSV
+            <Download size={13} /> CSV татах
           </button>
           <Link href="/admin/reservations/new"
             className="inline-flex items-center gap-1.5 bg-accent text-white font-semibold px-4 py-2 rounded-full shadow-glow hover:bg-accent-soft transition text-[13px]">
-            <Plus size={14} /> New booking
+            <Plus size={14} /> Шинэ захиалга
           </Link>
         </div>
       </div>

@@ -45,15 +45,15 @@ export default function AdminCustomers() {
   return (
     <div className="max-w-7xl space-y-5">
       <div>
-        <h1 className="font-display text-[28px] md:text-[34px] font-bold">Customers</h1>
-        <p className="text-muted text-[14px] mt-1">Registered guests and walk-ins with their visit history & lifetime value.</p>
+        <h1 className="font-display text-[28px] md:text-[34px] font-bold">Үйлчлүүлэгчид</h1>
+        <p className="text-muted text-[14px] mt-1">Бүртгэлтэй зочид, орж ирэгсэд — захиалгын түүх, нийт зарцуулалт.</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <Kpi label="Total guests" value={total} />
-        <Kpi label="VIPs (5+ visits)" value={vipCount} accent />
-        <Kpi label="Total visits" value={totalVisits} />
-        <Kpi label="Lifetime spend" value={formatMnt(totalSpend)} />
+        <Kpi label="Нийт зочин" value={total} />
+        <Kpi label="VIP (5+ удаа)" value={vipCount} accent />
+        <Kpi label="Нийт ирэлт" value={totalVisits} />
+        <Kpi label="Нийт зарцуулалт" value={formatMnt(totalSpend)} />
       </div>
 
       <div className="bg-white dark:bg-[#14161b] border border-line rounded-2xl p-3">

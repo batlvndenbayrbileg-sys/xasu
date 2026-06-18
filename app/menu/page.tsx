@@ -1,20 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import CategoryTabs from "@/components/CategoryTabs";
 import DishCard from "@/components/DishCard";
 import { DISHES } from "@/lib/data";
-import type { Category } from "@/lib/types";
+import type { Category, Dish } from "@/lib/types";
 import { useI18n } from "@/lib/i18n";
+import { getJson } from "@/lib/fetcher";
 
 export default function MenuPage() {
   const { t } = useI18n();
   const [cat, setCat] = useState<Category>("Specials");
   const [q, setQ] = useState("");
+  const [allDishes, setAllDishes] = useState<Dish[]>(DISHES as any);
+
+  useEffect(() => {
+    getJson<Dish[]>("/api/dishes").then(({ data }) => { if (data?.length) setAllDishes(data); });
+  }, []);
+
   const dishes = useMemo(
-    () => DISHES.filter((d) => d.category === cat && d.name.toLowerCase().includes(q.toLowerCase())),
-    [cat, q]
+    () => allDishes.filter((d) => d.category === cat && d.name.toLowerCase().includes(q.toLowerCase())),
+    [allDishes, cat, q]
   );
 
   return (
