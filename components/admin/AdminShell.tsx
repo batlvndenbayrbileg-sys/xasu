@@ -3,27 +3,55 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users, Calendar, Settings, Shield, Map, UserCog, Bell, Clock } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getJson } from "@/lib/fetcher";
 import clsx from "clsx";
 import { sendJson } from "@/lib/fetcher";
 import type { PublicUser } from "@/lib/auth";
 
-const NAV = [
-  { href: "/admin/today", label: "Өнөөдөр", icon: Activity },
-  { href: "/admin", label: "Хяналтын самбар", icon: LayoutDashboard, exact: true },
-  { href: "/admin/calendar", label: "Календарь", icon: Calendar },
-  { href: "/admin/reservations", label: "Захиалга", icon: CalendarRange },
-  { href: "/admin/customers", label: "Үйлчлүүлэгчид", icon: Users },
-  { href: "/admin/payments", label: "Төлбөр", icon: CreditCard },
-  { href: "/admin/tables", label: "Ширээ", icon: Map },
-  { href: "/admin/menu", label: "Цэс", icon: UtensilsCrossed },
-  { href: "/admin/timesheet", label: "Цаг бүртгэл", icon: Clock },
-  { href: "/admin/reports", label: "Тайлан", icon: BarChart3 },
-  { href: "/admin/staff", label: "Ажилчид", icon: UserCog },
-  { href: "/admin/audit", label: "Үйлдлийн лог", icon: Shield },
-  { href: "/admin/settings", label: "Тохиргоо", icon: Settings },
+const NAV_GROUPS = [
+  {
+    title: "Үндсэн",
+    items: [
+      { href: "/admin/today", label: "Өнөөдөр", icon: Activity },
+      { href: "/admin", label: "Хяналтын самбар", icon: LayoutDashboard, exact: true },
+    ],
+  },
+  {
+    title: "Үйл ажиллагаа",
+    items: [
+      { href: "/admin/reservations", label: "Захиалга", icon: CalendarRange },
+      { href: "/admin/calendar", label: "Календарь", icon: Calendar },
+      { href: "/admin/tables", label: "Ширээ", icon: Map },
+      { href: "/admin/customers", label: "Үйлчлүүлэгчид", icon: Users },
+    ],
+  },
+  {
+    title: "Цэс & Төлбөр",
+    items: [
+      { href: "/admin/menu", label: "Цэс", icon: UtensilsCrossed },
+      { href: "/admin/payments", label: "Төлбөр", icon: CreditCard },
+    ],
+  },
+  {
+    title: "Хүний нөөц",
+    items: [
+      { href: "/admin/timesheet", label: "Цаг бүртгэл", icon: Clock },
+      { href: "/admin/staff", label: "Ажилчид", icon: UserCog },
+    ],
+  },
+  {
+    title: "Тайлан & Систем",
+    items: [
+      { href: "/admin/reports", label: "Тайлан", icon: BarChart3 },
+      { href: "/admin/audit", label: "Үйлдлийн лог", icon: Shield },
+      { href: "/admin/settings", label: "Тохиргоо", icon: Settings },
+    ],
+  },
 ];
+
+/** Flat list for mobile tabs (groups don't fit a horizontal scroller). */
+const NAV = NAV_GROUPS.flatMap((g) => g.items);
 
 function BellButton({ open, setOpen, count, recent }: { open: boolean; setOpen: (b: boolean) => void; count: number; recent: any[] }) {
   return (
@@ -66,6 +94,7 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
   const isActive = (href: string, exact?: boolean) => (exact || href === "/admin" ? pathname === href : pathname.startsWith(href));
   const [bellOpen, setBellOpen] = useState(false);
   const [recent, setRecent] = useState<any[]>([]);
+  const activeTabRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     const load = () => getJson<any[]>("/api/admin/audit").then(({ data }) => setRecent((data ?? []).slice(0, 8)));
@@ -73,6 +102,11 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
     const id = setInterval(load, 60000);
     return () => clearInterval(id);
   }, []);
+
+  // Keep the active pill visible in the mobile tab scroller.
+  useEffect(() => {
+    activeTabRef.current?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [pathname]);
 
   async function logout() {
     await sendJson("/api/auth/logout", "POST");
@@ -83,23 +117,30 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
     <div className="min-h-screen bg-neutral-50 dark:bg-[#0b0c0f] flex">
       {/* SIDEBAR */}
       <aside className="hidden md:flex w-60 shrink-0 flex-col border-r border-line bg-white dark:bg-[#14161b] sticky top-0 h-screen">
-        <div className="px-5 py-5 border-b border-line">
+        <Link href="/admin" className="block px-5 py-5 border-b border-line hover:bg-neutral-50 dark:hover:bg-neutral-100/5 transition">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo.png" alt="Xasu Admin" className="h-9 w-auto" />
           <p className="mt-2 text-[11px] uppercase tracking-widest text-muted font-semibold">Удирдлагын самбар</p>
-        </div>
+        </Link>
 
-        <nav className="flex-1 p-3 space-y-1">
-          {NAV.map(({ href, label, icon: Icon, exact }) => (
-            <Link key={href} href={href}
-              className={clsx(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-medium transition",
-                isActive(href, exact)
-                  ? "bg-accent/10 text-accent"
-                  : "text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-100 dark:text-neutral-300",
-              )}>
-              <Icon size={17} /> {label}
-            </Link>
+        <nav className="flex-1 p-3 space-y-4 overflow-y-auto no-scrollbar">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.title}>
+              <p className="px-3 mb-1 text-[10px] uppercase tracking-widest text-muted/70 font-bold">{group.title}</p>
+              <div className="space-y-0.5">
+                {group.items.map(({ href, label, icon: Icon, exact }) => (
+                  <Link key={href} href={href}
+                    className={clsx(
+                      "flex items-center gap-3 px-3 py-2 rounded-lg text-[13.5px] font-medium transition",
+                      isActive(href, exact)
+                        ? "bg-accent/10 text-accent"
+                        : "text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-100 dark:text-neutral-300",
+                    )}>
+                    <Icon size={16} /> {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 
@@ -125,8 +166,10 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
       {/* MOBILE TOPBAR + content */}
       <div className="flex-1 min-w-0 flex flex-col">
         <header className="md:hidden sticky top-0 z-40 bg-white dark:bg-[#14161b] border-b border-line px-4 h-14 flex items-center justify-between">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo.png" alt="Xasu Admin" className="h-8 w-auto" />
+          <Link href="/admin">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Xasu Admin" className="h-8 w-auto" />
+          </Link>
           <span className="text-[11px] uppercase tracking-widest text-muted font-semibold">Удирдлага</span>
           <div className="flex items-center gap-2">
             <BellButton open={bellOpen} setOpen={setBellOpen} count={recent.length} recent={recent} />
@@ -142,15 +185,18 @@ export default function AdminShell({ user, children }: { user: PublicUser; child
         {/* mobile tabs */}
         <div className="md:hidden sticky top-14 z-30 bg-white dark:bg-[#14161b] border-b border-line overflow-x-auto no-scrollbar">
           <div className="flex gap-1 p-2 min-w-max">
-            {NAV.map(({ href, label, icon: Icon, exact }) => (
-              <Link key={href} href={href}
-                className={clsx(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold whitespace-nowrap transition",
-                  isActive(href, exact) ? "bg-accent text-white" : "text-neutral-500 hover:bg-neutral-100",
-                )}>
-                <Icon size={13} /> {label}
-              </Link>
-            ))}
+            {NAV.map(({ href, label, icon: Icon, exact }) => {
+              const active = isActive(href, exact);
+              return (
+                <Link key={href} href={href} ref={active ? activeTabRef : undefined}
+                  className={clsx(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold whitespace-nowrap transition",
+                    active ? "bg-accent text-white" : "text-neutral-500 hover:bg-neutral-100",
+                  )}>
+                  <Icon size={13} /> {label}
+                </Link>
+              );
+            })}
           </div>
         </div>
 
