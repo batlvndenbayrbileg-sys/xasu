@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Star, ChevronRight, UtensilsCrossed, CalendarRange } from "lucide-react";
 import CategoryTabs from "@/components/CategoryTabs";
-import DishCard from "@/components/DishCard";
+import DishCarousel from "@/components/DishCarousel";
 import DishMarquee from "@/components/DishMarquee";
 import PhoShowcase from "@/components/PhoShowcase";
 import EventCarousel from "@/components/EventCarousel";
@@ -100,9 +100,7 @@ export default function HomePage() {
 
         <Reveal delay={0.05}><div className="mt-6"><CategoryTabs value={cat} onChange={setCat} /></div></Reveal>
 
-        <Stagger key={cat} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mt-8">
-          {grid.map((d) => <StaggerItem key={d.id}><DishCard dish={d} /></StaggerItem>)}
-        </Stagger>
+        <Reveal delay={0.1}><div className="mt-8"><DishCarousel key={cat} dishes={grid} /></div></Reveal>
       </section>
 
       {/* MOVING DISHES MARQUEE */}
