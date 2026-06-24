@@ -64,42 +64,97 @@ img { -webkit-user-drag: none; }
   .fade-up { animation: none !important; }
 }
 
-/* ───────────────── Dark mode ─────────────────
-   The design uses a consistent token set (bg-white, neutral-*, text-ink,
-   border-line, text-muted), so a focused override flips the whole site. */
+/* ───────────────── Dark mode — "Taste of the World" ─────────────────
+   A bold, immersive dark theme: deep charcoal-black with warm amber glows,
+   glassy card surfaces, and glowing orange accents. The design uses a
+   consistent token set (bg-white, neutral-*, text-ink, border-line,
+   text-muted), so a focused override flips the whole site at once. */
 .dark { color-scheme: dark; }
-.dark body { background: #0b0c0f; color: #eceef2; }
+.dark body {
+  background: #08080a;
+  color: #e9ebef;
+}
 
-/* surfaces */
+/* Seamless theme transition */
+body { transition: background-color .45s ease; }
+
+/* Layer 1 — ambient warm radial glows (sit behind all content) */
+.dark body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(820px 560px at 10% -8%, rgba(255,106,26,.12), transparent 60%),
+    radial-gradient(720px 480px at 102% 2%, rgba(255,138,60,.09), transparent 55%),
+    radial-gradient(900px 760px at 50% 118%, rgba(255,106,26,.07), transparent 60%),
+    #08080a;
+}
+/* Layer 2 — fine charcoal-stone grain for texture */
+.dark body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: .04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* surfaces — glassy, gently warm, with a top edge highlight for depth */
 .dark .bg-white,
 .dark .bg-white\/70,
 .dark .bg-white\/80,
 .dark .bg-white\/85,
 .dark .bg-white\/90,
-.dark .bg-white\/95 { background-color: #14161b !important; }
+.dark .bg-white\/95 {
+  background-color: rgba(22,23,28,.92) !important;
+  background-image: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0) 40%) !important;
+  border-color: rgba(255,255,255,.07);
+}
 /* low-opacity whites used over dark heroes — keep them light & translucent
    so they still read as glass on the dark theme rather than going invisible */
 .dark .bg-white\/8,
 .dark .bg-white\/10,
 .dark .bg-white\/15,
 .dark .bg-white\/25 { background-color: rgba(255,255,255,0.06) !important; }
-.dark .bg-neutral-50 { background-color: #181a20 !important; }
-.dark .bg-neutral-100 { background-color: #1e2128 !important; }
-.dark .bg-neutral-200 { background-color: #2a2e37 !important; }
+.dark .bg-neutral-50 { background-color: #131419 !important; }
+.dark .bg-neutral-100 { background-color: #1b1d24 !important; }
+.dark .bg-neutral-200 { background-color: #272a33 !important; }
 
-/* borders / dividers */
-.dark .border-line { border-color: #272b33 !important; }
-.dark .divide-line > :not([hidden]) ~ :not([hidden]) { border-color: #272b33 !important; }
+/* borders / dividers — faint warm-tinted hairlines */
+.dark .border-line { border-color: rgba(255,255,255,.08) !important; }
+.dark .divide-line > :not([hidden]) ~ :not([hidden]) { border-color: rgba(255,255,255,.08) !important; }
 
 /* text */
 .dark .text-ink,
-.dark .text-ink\/90 { color: #f2f3f5 !important; }
-.dark .text-neutral-700 { color: #cfd4dc !important; }
-.dark .text-neutral-600 { color: #b9bfc9 !important; }
+.dark .text-ink\/90 { color: #f4f5f7 !important; }
+.dark .text-neutral-700 { color: #d2d6de !important; }
+.dark .text-neutral-600 { color: #bcc2cc !important; }
 .dark .text-neutral-500 { color: #9aa1ad !important; }
 .dark .text-neutral-400 { color: #828a96 !important; }
-.dark .text-muted { color: #98a0ac !important; }
+.dark .text-muted { color: #969da9 !important; }
 
-/* depth */
-.dark .shadow-card { box-shadow: 0 6px 20px rgba(0,0,0,.55) !important; }
-.dark .shadow-xl, .dark .shadow-2xl, .dark .shadow-lg { box-shadow: 0 18px 50px rgba(0,0,0,.6) !important; }
+/* accent — make the orange glow on the dark canvas */
+.dark .text-accent { color: #ff7d33 !important; text-shadow: 0 0 26px rgba(255,106,26,.28); }
+.dark .bg-accent { box-shadow: 0 6px 26px rgba(255,106,26,.30); }
+.dark .border-accent { border-color: #ff7d33 !important; }
+
+/* depth — deeper shadows + warm-tinted glow on primary CTAs */
+.dark .shadow-card {
+  box-shadow: 0 8px 28px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.04) !important;
+}
+.dark .shadow-xl, .dark .shadow-2xl, .dark .shadow-lg { box-shadow: 0 20px 56px rgba(0,0,0,.65) !important; }
+.dark .shadow-glow { box-shadow: 0 10px 34px rgba(255,106,26,.45) !important; }
+
+/* form controls read correctly on the dark canvas */
+.dark input, .dark textarea, .dark select {
+  background-color: rgba(255,255,255,.04);
+  border-color: rgba(255,255,255,.1);
+  color: #e9ebef;
+}
+.dark input::placeholder, .dark textarea::placeholder { color: #7c828d; }
+
+/* food imagery pops a touch more against the dark surroundings */
+.dark img:not([class*="logo"]) { filter: saturate(1.06) contrast(1.03); }
