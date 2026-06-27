@@ -15,6 +15,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (typeof b.active === "boolean") data.active = b.active;
   if (typeof b.pin === "string") {
     if (!/^\d{4,6}$/.test(b.pin)) return NextResponse.json({ error: "bad_pin" }, { status: 400 });
+    // Reject if another employee already uses this PIN (PINs must be unique).
+    const clash = await prisma.employee.findUnique({ where: { pin: b.pin } });
+    if (clash && clash.id !== params.id) return NextResponse.json({ error: "pin_taken" }, { status: 400 });
     data.pin = b.pin;
   }
   const emp = await prisma.employee.update({ where: { id: params.id }, data }).catch(() => null);

@@ -35,24 +35,32 @@ export async function POST(req: Request) {
       const intent = event.data?.object ?? event.data;
       const reservationId = intent?.metadata?.reservationId;
       const intentId = intent?.id;
-      if (reservationId) {
+      const isCart = intent?.metadata?.kind === "cart";
+      if (isCart && intentId) {
+        // Food order — mark paid so the kitchen sees a confirmed order.
+        await prisma.order.updateMany({
+          where: { paymentIntentId: intentId, paymentStatus: { not: "paid" } },
+          data: { paymentStatus: "paid" },
+        });
+      } else if (reservationId) {
         await prisma.reservation.updateMany({
           where: { id: reservationId, paymentStatus: { not: "paid" } },
           data: { paymentStatus: "paid" },
         });
       } else if (intentId) {
-        await prisma.reservation.updateMany({
-          where: { paymentIntentId: intentId, paymentStatus: { not: "paid" } },
-          data: { paymentStatus: "paid" },
-        });
+        // Unknown kind — flip whichever record carries this intent.
+        await Promise.all([
+          prisma.reservation.updateMany({ where: { paymentIntentId: intentId, paymentStatus: { not: "paid" } }, data: { paymentStatus: "paid" } }),
+          prisma.order.updateMany({ where: { paymentIntentId: intentId, paymentStatus: { not: "paid" } }, data: { paymentStatus: "paid" } }),
+        ]);
       }
     } else if (event.type === "payment_intent.canceled") {
       const intentId = event.data?.object?.id ?? event.data?.id;
       if (intentId) {
-        await prisma.reservation.updateMany({
-          where: { paymentIntentId: intentId, paymentStatus: "unpaid" },
-          data: { paymentStatus: "failed" },
-        });
+        await Promise.all([
+          prisma.reservation.updateMany({ where: { paymentIntentId: intentId, paymentStatus: "unpaid" }, data: { paymentStatus: "failed" } }),
+          prisma.order.updateMany({ where: { paymentIntentId: intentId, paymentStatus: "unpaid" }, data: { paymentStatus: "failed" } }),
+        ]);
       }
     }
   } catch {

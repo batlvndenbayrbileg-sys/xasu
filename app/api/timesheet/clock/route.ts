@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, clientIp } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -13,12 +14,21 @@ export const dynamic = "force-dynamic";
  *  - No open shift → open a new one (clock in)
  */
 export async function POST(req: Request) {
+  // Throttle PIN attempts per device/IP — a 4–6 digit PIN is brute-forceable
+  // and this endpoint is intentionally public (physical terminal).
+  const ip = clientIp(req);
+  const rl = rateLimit(`clock_${ip}`, 8, 60_000);
+  if (!rl.ok) return NextResponse.json({ error: "too_many", retryAfter: rl.retryAfter }, { status: 429 });
+
   const { pin, note } = await req.json().catch(() => ({}));
-  if (!pin || typeof pin !== "string") return NextResponse.json({ error: "bad_pin" }, { status: 400 });
+  if (!pin || typeof pin !== "string" || !/^\d{4,6}$/.test(pin)) {
+    return NextResponse.json({ error: "invalid_pin" }, { status: 400 });
+  }
 
   const employee = await prisma.employee.findUnique({ where: { pin } });
   if (!employee || !employee.active) {
-    return NextResponse.json({ error: "not_found" }, { status: 404 });
+    // Same generic error for unknown vs inactive — don't leak which PINs exist.
+    return NextResponse.json({ error: "invalid_pin" }, { status: 404 });
   }
 
   const openShift = await prisma.shift.findFirst({

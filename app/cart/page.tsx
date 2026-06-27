@@ -38,14 +38,22 @@ export default function CartPage() {
     getJson<any[]>("/api/tables").then(({ data }) => setAvailableTables(data ?? []));
   }, [tablePickerOpen, availableTables]);
 
+  // Full catalog (static + admin-added custom dishes) so the cart can resolve
+  // every item, including ones added from /menu that aren't in lib/data.ts.
+  const [catalog, setCatalog] = useState<any[]>(DISHES as any);
+  useEffect(() => {
+    getJson<any[]>("/api/dishes").then(({ data }) => { if (data?.length) setCatalog(data); });
+  }, []);
+  const byId = useMemo(() => new Map(catalog.map((d) => [d.id, d])), [catalog]);
+
   const lines = useMemo(() => items
     .map((it) => {
-      const d = DISHES.find((x) => x.id === it.id);
+      const d = byId.get(it.id);
       if (!d) return null;
       const unit = Math.round(d.price * 1000);
       return { id: it.id, dish: d, qty: it.qty, unit, lineTotal: unit * it.qty };
     })
-    .filter(Boolean) as { id: string; dish: any; qty: number; unit: number; lineTotal: number }[], [items]);
+    .filter(Boolean) as { id: string; dish: any; qty: number; unit: number; lineTotal: number }[], [items, byId]);
 
   const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
   const serviceFee = Math.round(subtotal * 0.1);
@@ -57,9 +65,8 @@ export default function CartPage() {
     if (!tableId) { toast.error("Эхлээд ширээгээ сонгоно уу"); setTablePickerOpen(true); return; }
     setSubmitting(true);
     const { ok, status, data, error } = await sendJson<any>("/api/payments/cart", "POST", {
-      amount: total,
       tableId,
-      items: lines.map((l) => ({ id: l.id, qty: l.qty, unit: l.unit })),
+      items: lines.map((l) => ({ id: l.id, qty: l.qty })),
     });
     if (status === 401) { router.push("/login?redirect=/cart"); return; }
     if (!ok) { setSubmitting(false); toast.error(error ?? "Payment error"); return; }

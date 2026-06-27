@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { notFound, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ChevronLeft, Heart, Flame, Timer, Star, ArrowRight, ShoppingBasket, Minus, Plus } from "lucide-react";
+import { ChevronLeft, Heart, Flame, Timer, Star, ArrowRight, ShoppingBasket, Minus, Plus, Loader2 } from "lucide-react";
 import clsx from "clsx";
 import { DISHES } from "@/lib/data";
+import type { Dish } from "@/lib/types";
+import { getJson } from "@/lib/fetcher";
 import { useI18n } from "@/lib/i18n";
 import { formatDishPrice } from "@/lib/payments";
 import { useFavorites } from "@/lib/favorites";
@@ -38,8 +40,37 @@ export default function DishDetail({ params }: { params: { id: string } }) {
   const inCart = currentQty > 0;
   const mounted = useMounted();
   const [qty, setQtyLocal] = useState(1);
-  const dish = DISHES.find((d) => d.id === params.id);
-  if (!dish) notFound();
+
+  // Resolve from the static catalog first; fall back to /api/dishes so
+  // admin-added custom dishes (DB-only) also open instead of 404-ing.
+  const [dish, setDish] = useState<Dish | null>(() => DISHES.find((d) => d.id === params.id) ?? null);
+  const [resolving, setResolving] = useState(() => !DISHES.some((d) => d.id === params.id));
+
+  useEffect(() => {
+    if (!resolving) return;
+    getJson<Dish[]>("/api/dishes")
+      .then(({ data }) => { setDish(data?.find((d) => d.id === params.id) ?? null); setResolving(false); })
+      .catch(() => setResolving(false));
+  }, [params.id, resolving]);
+
+  if (resolving) {
+    return <div className="pt-32 min-h-[70vh] grid place-items-center"><Loader2 className="animate-spin text-neutral-400" /></div>;
+  }
+  if (!dish) {
+    return (
+      <div className="pt-32 min-h-[70vh] grid place-items-center text-center px-6">
+        <div>
+          <div className="text-5xl">🍽️</div>
+          <h1 className="font-display text-[24px] font-bold mt-4">Хоол олдсонгүй</h1>
+          <p className="text-muted mt-2">Энэ хоол байхгүй эсвэл устгагдсан байна.</p>
+          <Link href="/menu" className="inline-flex items-center gap-2 mt-6 bg-accent text-white font-semibold px-6 py-3 rounded-full shadow-glow hover:bg-accent-soft transition">
+            Цэс рүү буцах <ArrowRight size={16} />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   const liked = mounted && ids.includes(dish.id);
 
   function addNTimes() {
@@ -47,7 +78,7 @@ export default function DishDetail({ params }: { params: { id: string } }) {
     toast.success(`Сагсанд ${qty} ширхэг нэмлээ`);
   }
 
-  const pairings = DISHES.filter((d) => d.id !== dish.id).slice(0, 3);
+  const pairings = DISHES.filter((d) => d.id !== dish!.id).slice(0, 3);
 
   return (
     <div className="pt-20 md:pt-24">

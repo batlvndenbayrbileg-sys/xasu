@@ -3,11 +3,15 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTableSession } from "@/lib/table-session";
+import { TABLES } from "@/lib/data";
 import { toast } from "@/lib/toast";
 
+const TABLE_BY_ID = new Map(TABLES.map((t) => [t.id, t]));
+
 /**
- * Reads `?table=T-12` from URL (QR-code link from a physical table) and locks
- * the table into the session. Once set, all orders default to that table.
+ * Reads `?table=t01` from URL (QR-code link from a physical table) and locks
+ * the table into the session. Ignores ids that don't match a real table so a
+ * tampered/bogus `?table=` value can't poison the order.
  */
 export default function TableFromUrl() {
   const params = useSearchParams();
@@ -17,9 +21,11 @@ export default function TableFromUrl() {
   useEffect(() => {
     const t = params.get("table");
     if (!t) return;
+    const table = TABLE_BY_ID.get(t);
+    if (!table) return; // unknown table id — ignore silently
     if (t !== currentTable) {
       setTable(t, "qr");
-      toast.success(`${t} ширээнд тавтай морилно уу`);
+      toast.success(`${table.label} ширээнд тавтай морилно уу`);
     }
   }, [params, currentTable, setTable]);
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users, Calendar, Settings, Shield, Map, UserCog, Bell, Clock } from "lucide-react";
+import { LayoutDashboard, CalendarRange, CreditCard, UtensilsCrossed, BarChart3, LogOut, Home, Activity, Users, Calendar, Settings, Shield, Map, UserCog, Bell, Clock, Soup } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { getJson } from "@/lib/fetcher";
 import clsx from "clsx";
@@ -20,7 +20,8 @@ const NAV_GROUPS = [
   {
     title: "Үйл ажиллагаа",
     items: [
-      { href: "/admin/reservations", label: "Захиалга", icon: CalendarRange },
+      { href: "/admin/orders", label: "Хоолны захиалга", icon: Soup },
+      { href: "/admin/reservations", label: "Ширээ захиалга", icon: CalendarRange },
       { href: "/admin/calendar", label: "Календарь", icon: Calendar },
       { href: "/admin/tables", label: "Ширээ", icon: Map },
       { href: "/admin/customers", label: "Үйлчлүүлэгчид", icon: Users },

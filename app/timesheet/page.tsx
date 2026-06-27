@@ -47,7 +47,11 @@ export default function TimesheetTerminal() {
     const { ok, data, error: e } = await sendJson<ClockResult>("/api/timesheet/clock", "POST", { pin });
     setBusy(false);
     if (!ok || !data) {
-      setError(e === "not_found" ? "PIN олдсонгүй" : "Алдаа гарлаа");
+      setError(
+        e === "invalid_pin" ? "PIN буруу байна"
+        : e === "too_many" ? "Хэт олон оролдлого — түр хүлээнэ үү"
+        : "Алдаа гарлаа",
+      );
       setPin("");
       return;
     }

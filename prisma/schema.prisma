@@ -123,6 +123,34 @@ model Session {
   @@index([expiresAt])
 }
 
+/// Food order placed from the cart (QR table ordering or remote online order).
+/// Separate from Reservation — this is what the kitchen fulfils.
+model Order {
+  id              String   @id @default(cuid())
+  /// null for guest/QR orders with no logged-in user
+  userId          String?
+  tableId         String
+  /// JSON: [{ id, name, qty, unit }] — unit is MNT integer, priced server-side
+  items           Json
+  /// Totals in MNT (integer), all computed server-side
+  subtotal        Int      @default(0)
+  serviceFee      Int      @default(0)
+  amount          Int      @default(0)
+  /// new | preparing | served | completed | cancelled
+  status          String   @default("new")
+  paymentStatus   String   @default("unpaid") // unpaid | paid | refunded | failed
+  paymentIntentId String?
+  source          String   @default("qr") // qr | online
+  note            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([createdAt])
+  @@index([tableId])
+  @@index([status])
+  @@index([paymentStatus])
+}
+
 /// Restaurant staff (separate from User accounts — these are physical employees
 /// tracked by PIN, not necessarily app users).
 model Employee {

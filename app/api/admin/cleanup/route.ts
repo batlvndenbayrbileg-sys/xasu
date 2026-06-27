@@ -31,25 +31,25 @@ export async function POST(req: Request) {
   const unpaidCutoff = new Date(now - 7 * 24 * 60 * 60 * 1000);
   const paidCutoff = new Date(now - 365 * 24 * 60 * 60 * 1000);
 
-  const [unpaid, paid] = await Promise.all([
+  const [unpaid, paid, unpaidOrders, paidOrders] = await Promise.all([
     prisma.reservation.deleteMany({
-      where: {
-        paymentStatus: { in: ["unpaid", "failed"] },
-        createdAt: { lt: unpaidCutoff },
-      },
+      where: { paymentStatus: { in: ["unpaid", "failed"] }, createdAt: { lt: unpaidCutoff } },
     }),
     prisma.reservation.deleteMany({
-      where: {
-        paymentStatus: { in: ["paid", "refunded"] },
-        createdAt: { lt: paidCutoff },
-      },
+      where: { paymentStatus: { in: ["paid", "refunded"] }, createdAt: { lt: paidCutoff } },
+    }),
+    prisma.order.deleteMany({
+      where: { paymentStatus: { in: ["unpaid", "failed"] }, createdAt: { lt: unpaidCutoff } },
+    }),
+    prisma.order.deleteMany({
+      where: { paymentStatus: { in: ["paid", "refunded"] }, createdAt: { lt: paidCutoff } },
     }),
   ]);
 
   return NextResponse.json({
     ok: true,
-    deletedUnpaid: unpaid.count,
-    deletedPaid: paid.count,
+    deletedUnpaid: unpaid.count + unpaidOrders.count,
+    deletedPaid: paid.count + paidOrders.count,
     ranAt: new Date().toISOString(),
   });
 }

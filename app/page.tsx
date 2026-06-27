@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Star, ChevronRight, UtensilsCrossed, CalendarRange } from "lucide-react";
@@ -24,14 +24,20 @@ import {
 } from "@/components/ui/animated-video-on-scroll";
 import { useMediaQuery } from "@/lib/useMediaQuery";
 import { DISHES } from "@/lib/data";
-import type { Category } from "@/lib/types";
+import type { Category, Dish } from "@/lib/types";
+import { getJson } from "@/lib/fetcher";
 import { useI18n } from "@/lib/i18n";
 
 export default function HomePage() {
   const { t } = useI18n();
   const [cat, setCat] = useState<Category>("Specials");
-  const dishes = useMemo(() => DISHES.filter((d) => d.category === cat), [cat]);
-  const featured = DISHES.filter((d) => d.category === "Specials").slice(0, 8);
+  // Merge admin-added custom dishes into the catalog so they show on the homepage too.
+  const [catalog, setCatalog] = useState<Dish[]>(DISHES);
+  useEffect(() => {
+    getJson<Dish[]>("/api/dishes").then(({ data }) => { if (data?.length) setCatalog(data); });
+  }, []);
+  const dishes = useMemo(() => catalog.filter((d) => d.category === cat), [cat, catalog]);
+  const featured = useMemo(() => catalog.filter((d) => d.category === "Specials").slice(0, 8), [catalog]);
   const grid = dishes.length ? dishes : featured;
 
   // Curated dish photos for the hero marquee — varied across categories.
