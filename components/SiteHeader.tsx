@@ -65,9 +65,9 @@ export default function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-1.5 md:gap-2.5">
-            {/* language + dark/light — matching sliding pills */}
+            {/* language + dark/light — dark toggle is desktop-only */}
             <LanguageToggle className="hidden sm:flex scale-90" />
-            <ThemeToggle className="hidden sm:flex scale-90" />
+            <ThemeToggle className="hidden md:flex scale-90" />
 
             {/* cart */}
             <Link href="/cart" aria-label={t("nav.cart")}
@@ -129,9 +129,9 @@ export default function SiteHeader() {
               </nav>
 
               <div className="mt-auto space-y-4">
+                {/* Dark-mode toggle intentionally omitted on mobile. */}
                 <div className="flex items-center gap-3">
                   <LanguageToggle />
-                  <ThemeToggle />
                 </div>
                 {!user && (
                   <Link href="/login" className="block text-center bg-accent text-white font-semibold py-3.5 rounded-full shadow-glow">

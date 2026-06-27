@@ -82,7 +82,7 @@ export default function BookPage() {
   return (
     <>
       {/* Mobile gets the step-by-step wizard; desktop keeps the rich layout. */}
-      <div className="lg:hidden pt-20"><MobileBookingWizard /></div>
+      <div className="lg:hidden pt-14 md:pt-20"><MobileBookingWizard /></div>
 
       <div className="hidden lg:block pt-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -215,24 +215,6 @@ export default function BookPage() {
             </div>
           </aside>
         </div>
-      </div>
-
-      {/* mobile sticky action bar */}
-      <div className="lg:hidden fixed bottom-16 inset-x-0 z-40 bg-white border-t border-line p-3 pb-[max(env(safe-area-inset-bottom),12px)]">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 flex-none">
-            <button onClick={() => setPartySize(Math.max(1, partySize - 1))} className="w-8 h-8 rounded-full border border-line grid place-items-center"><Minus size={14} /></button>
-            <span className={clsx("min-w-[18px] text-center font-bold", overCap && "text-red-500")}>{partySize}</span>
-            <button onClick={() => setPartySize(partySize + 1)} className="w-8 h-8 rounded-full border border-line grid place-items-center"><Plus size={14} /></button>
-          </div>
-          <button disabled={!canConfirm || submitting} onClick={confirm}
-            className={clsx("flex-1 font-semibold py-3.5 rounded-full transition flex items-center justify-center gap-2 text-[14px]",
-              canConfirm ? "bg-accent text-white shadow-glow" : "bg-neutral-200 text-neutral-400")}>
-            {submitting && <Loader2 size={15} className="animate-spin" />}
-            {selected ? `${t("book.bookThis")}` : t("book.selectTable")}
-          </button>
-        </div>
-        {(overCap || error) && <p className="text-[11px] text-red-500 mt-1.5 text-center">{error ?? t("book.exceeds")}</p>}
       </div>
 
       {/* 360° / AR viewer */}

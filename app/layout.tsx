@@ -61,7 +61,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Suspense fallback={null}><TableFromUrl /></Suspense>
             <SiteHeader />
             <main className="flex-1 w-full pb-16 md:pb-0">{children}</main>
-            <Footer />
+            {/* Footer is desktop-only — on mobile the bottom nav owns that space. */}
+            <div className="hidden md:block"><Footer /></div>
             <MobileNav />
             <Toaster />
             <ConfirmDialog />

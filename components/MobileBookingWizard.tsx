@@ -99,9 +99,10 @@ export default function MobileBookingWizard() {
 
 
   return (
-    <div className="lg:hidden min-h-[calc(100vh-4rem)] flex flex-col bg-[var(--bg)]">
-      {/* TOP BAR — back + progress */}
-      <header className="sticky top-[64px] z-30 bg-[var(--bg)]/90 backdrop-blur border-b border-line">
+    <div className="lg:hidden min-h-[calc(100vh-3.5rem)] flex flex-col bg-[var(--bg)]">
+      {/* TOP BAR — back + progress. Sticks right below the site header
+          (56px on phones / 80px on tablets). */}
+      <header className="sticky top-14 md:top-20 z-30 bg-[var(--bg)]/90 backdrop-blur border-b border-line">
         <div className="flex items-center gap-3 px-4 py-3">
           <button onClick={() => (step === 1 ? router.back() : back())}
             className="w-9 h-9 rounded-full border border-line bg-white grid place-items-center text-ink active:scale-95 transition">
@@ -122,7 +123,7 @@ export default function MobileBookingWizard() {
       </header>
 
       {/* STEP CONTENT */}
-      <main className="flex-1 px-4 pt-5 pb-32">
+      <main className="flex-1 w-full max-w-xl mx-auto px-4 pt-5 pb-32">
         <AnimatePresence mode="wait">
           <motion.div key={step}
             initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}

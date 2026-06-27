@@ -35,14 +35,21 @@ export default function BookingReview() {
   const setQty = useCart((s) => s.setQty);
   const remove = useCart((s) => s.remove);
 
+  // Full catalog (static + admin custom dishes) so pre-ordered custom dishes resolve.
+  const [catalog, setCatalog] = useState<any[]>(DISHES as any);
+  useEffect(() => {
+    getJson<any[]>("/api/dishes").then(({ data }) => { if (data?.length) setCatalog(data); });
+  }, []);
+  const byId = useMemo(() => new Map(catalog.map((d) => [d.id, d])), [catalog]);
+
   const cartLines = useMemo(() => cartItems
     .map((c) => {
-      const d = DISHES.find((x) => x.id === c.id);
+      const d = byId.get(c.id);
       if (!d) return null;
       const unit = Math.round(d.price * 1000);
       return { id: c.id, dish: d, qty: c.qty, unit, total: unit * c.qty };
     })
-    .filter(Boolean) as { id: string; dish: any; qty: number; unit: number; total: number }[], [cartItems]);
+    .filter(Boolean) as { id: string; dish: any; qty: number; unit: number; total: number }[], [cartItems, byId]);
 
   const foodTotal = cartLines.reduce((s, l) => s + l.total, 0);
   const total = DEPOSIT_MNT + foodTotal;
@@ -193,14 +200,15 @@ export default function BookingReview() {
                   </div>
                 </dl>
 
+                {/* Desktop pays from the card; mobile uses the sticky bottom bar. */}
                 <button onClick={payAndConfirm} disabled={submitting}
-                  className="mt-6 w-full bg-accent text-white font-semibold py-4 rounded-full shadow-glow hover:bg-accent-soft transition inline-flex items-center justify-center gap-2 disabled:opacity-60">
+                  className="mt-6 w-full bg-accent text-white font-semibold py-4 rounded-full shadow-glow hover:bg-accent-soft transition hidden lg:inline-flex items-center justify-center gap-2 disabled:opacity-60">
                   {submitting ? <Loader2 size={17} className="animate-spin" /> : <ShieldCheck size={17} />}
                   {t("review.payAndConfirm")}
                   <ArrowRight size={15} />
                 </button>
 
-                <p className="text-[11px] text-muted text-center mt-3 inline-flex items-center justify-center gap-1.5 w-full">
+                <p className="text-[11px] text-muted text-center mt-3 hidden lg:inline-flex items-center justify-center gap-1.5 w-full">
                   <ShieldCheck size={11} className="text-emerald-500" /> Wire Payment · QPay
                 </p>
               </section>
@@ -216,6 +224,21 @@ export default function BookingReview() {
               </Link>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile sticky pay bar — MobileNav is hidden on /booking so this owns the bottom. */}
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-line px-4 py-3 pb-[max(env(safe-area-inset-bottom),12px)] shadow-[0_-4px_20px_rgba(0,0,0,.06)]">
+        <div className="flex items-center gap-3">
+          <div className="flex-none">
+            <div className="text-[10px] text-muted uppercase tracking-wide font-bold">{t("review.totalToPay")}</div>
+            <div className="font-display text-[20px] font-bold leading-none">{formatMnt(total)}</div>
+          </div>
+          <button onClick={payAndConfirm} disabled={submitting}
+            className="flex-1 bg-accent text-white font-semibold py-3.5 rounded-full shadow-glow active:scale-[0.98] transition inline-flex items-center justify-center gap-2 disabled:opacity-60">
+            {submitting ? <Loader2 size={16} className="animate-spin" /> : <ShieldCheck size={16} />}
+            {t("review.payAndConfirm")}
+          </button>
         </div>
       </div>
     </div>
