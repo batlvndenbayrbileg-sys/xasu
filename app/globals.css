@@ -37,6 +37,21 @@ img { -webkit-user-drag: none; }
 
 :root { --accent: #FF6A1A; }
 
+/* shadcn-style tokens consumed by components/ui/dish-orbit-carousel.tsx
+   (and any future shadcn components). Mapped to the project palette. */
+:root {
+  --color-background: #faf8f5;
+  --color-foreground: #1a1a1a;
+  --color-primary: #FF6A1A;
+  --color-muted-foreground: #6b7280;
+}
+.dark {
+  --color-background: #08080a;
+  --color-foreground: #e9ebef;
+  --color-primary: #ff7d33;
+  --color-muted-foreground: #969da9;
+}
+
 .font-display { font-family: var(--font-display), Georgia, serif; }
 
 /* subtle entrance used across sections */
