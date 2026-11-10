@@ -455,9 +455,9 @@ export function DishOrbitCarousel({
       tabIndex={0}
       onKeyDown={onKeyDown}
     >
-      <style>
-        {(fontSrc ? "@font-face{font-family:" + FONT + ";src:url(" + fontSrc + ") format('woff2');font-weight:100 900;font-display:swap}" : "") + CSS}
-      </style>
+      {/* dangerouslySetInnerHTML: the CSS string contains `>` (e.g. `.dsh-orbit>img`)
+          which React would HTML-encode in JSX children, causing a hydration mismatch. */}
+      <style dangerouslySetInnerHTML={{ __html: (fontSrc ? "@font-face{font-family:" + FONT + ";src:url(" + fontSrc + ") format('woff2');font-weight:100 900;font-display:swap}" : "") + CSS }} />
       {backdrop ? <img className="dsh-bd" src={backdrop} alt="" width={1200} height={900} /> : null}
       {backdrop ? <div className="dsh-dim" /> : null}
       {backdrop ? <div className="dsh-wash" /> : null}
