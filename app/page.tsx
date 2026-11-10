@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Star, ChevronRight, UtensilsCrossed, CalendarRange } from "lucide-react";
 import CategoryTabs from "@/components/CategoryTabs";
@@ -12,7 +13,7 @@ import EventCarousel from "@/components/EventCarousel";
 import Testimonials from "@/components/Testimonials";
 import FinalCTA from "@/components/FinalCTA";
 import { Reveal, Stagger, StaggerItem } from "@/components/Reveal";
-import { AnimatedMarqueeHero } from "@/components/ui/hero-3";
+import DishOrbitCarousel, { type Dish as OrbitDish } from "@/components/ui/dish-orbit-carousel";
 import { FlowButton } from "@/components/ui/flow-button";
 import {
   ContainerAnimated,
@@ -28,8 +29,19 @@ import type { Category, Dish } from "@/lib/types";
 import { getJson } from "@/lib/fetcher";
 import { useI18n } from "@/lib/i18n";
 
+const ORBIT_ACCENTS = ["#f6a37c", "#f2a6c6", "#bcd98e", "#f5d26a", "#9fcbe8", "#c7b2f0"];
+const ORBIT_CHEFS = [
+  { chef: "Chef Mara Lind", kitchen: "Ember Counter" },
+  { chef: "Chef Teo Ashe", kitchen: "The Greenhouse Table" },
+  { chef: "Chef Ilse Noor", kitchen: "Saltwater Kitchen" },
+  { chef: "Chef Rafa Okoye", kitchen: "Pergola Café" },
+  { chef: "Chef June Park", kitchen: "Morning Room" },
+  { chef: "Chef Noa Vance", kitchen: "Copper Pass" },
+];
+
 export default function HomePage() {
   const { t } = useI18n();
+  const router = useRouter();
   const [cat, setCat] = useState<Category>("Specials");
   // Merge admin-added custom dishes into the catalog so they show on the homepage too.
   const [catalog, setCatalog] = useState<Dish[]>(DISHES);
@@ -40,46 +52,40 @@ export default function HomePage() {
   const featured = useMemo(() => catalog.filter((d) => d.category === "Specials").slice(0, 8), [catalog]);
   const grid = dishes.length ? dishes : featured;
 
-  // Curated dish photos for the hero marquee — varied across categories.
-  const heroImages = useMemo(() => {
-    const picks = [
-      ...DISHES.filter((d) => d.category === "Specials"),
-      ...DISHES.filter((d) => d.category === "Main"),
-      ...DISHES.filter((d) => d.category === "Seasonal"),
-      ...DISHES.filter((d) => d.category === "Desserts"),
-    ];
-    // de-dupe images, take 14
-    const seen = new Set<string>();
-    const out: string[] = [];
-    for (const d of picks) {
-      if (!seen.has(d.image)) { seen.add(d.image); out.push(d.image); }
-      if (out.length >= 14) break;
-    }
-    return out;
-  }, []);
-
-  const heroTitle = t("home.heroTitle");
-  const titleNode = (
-    <>
-      {heroTitle.split("\n").map((line, i) => (
-        <span key={i} className="block">{line}</span>
-      ))}
-    </>
-  );
+  // Hero: orbit carousel fed from the Specials catalog (static + custom).
+  const orbit = useMemo(() => {
+    const picks = catalog.filter((d) => d.category === "Specials").slice(0, 6);
+    const source = picks.length >= 2 ? picks : catalog.slice(0, 6);
+    return source.map((d, i) => {
+      const parts = d.name.trim().split(" ");
+      const subtitle = parts.length > 1 ? parts[parts.length - 1] : d.name;
+      const title = parts.length > 1 ? parts.slice(0, -1).join(" ") : d.name;
+      return {
+        id: d.id,
+        dish: {
+          title, subtitle, image: d.image, alt: d.name, rating: d.rating,
+          chef: ORBIT_CHEFS[i % ORBIT_CHEFS.length].chef,
+          kitchen: ORBIT_CHEFS[i % ORBIT_CHEFS.length].kitchen,
+          description: d.description, likes: 60 + i * 11,
+          ingredients: [`${d.calories} kcal`, `${d.prepMinutes}′`, d.category],
+          accent: ORBIT_ACCENTS[i % ORBIT_ACCENTS.length], label: d.name,
+        } as OrbitDish,
+      };
+    });
+  }, [catalog]);
+  const orbitDishes = useMemo(() => orbit.map((o) => o.dish), [orbit]);
+  const orbitIds = useMemo(() => orbit.map((o) => o.id), [orbit]);
 
   return (
     <>
-      {/* HERO — animated marquee */}
-      <AnimatedMarqueeHero
-        tagline={t("home.badge")}
-        title={titleNode}
-        description={t("home.heroSub")}
-        ctaText={t("home.reserve")}
-        ctaHref="/book"
-        secondaryCtaText={t("home.explore")}
-        secondaryCtaHref="/menu"
-        images={heroImages}
-      />
+      {/* HERO — dish orbit carousel. "Order food" → dish page, "Play video" → reserve. */}
+      {orbitDishes.length >= 2 && (
+        <DishOrbitCarousel
+          dishes={orbitDishes}
+          onOrder={(_, i) => router.push(`/dish/${orbitIds[i]}`)}
+          onPlay={() => router.push("/book")}
+        />
+      )}
 
       {/* VALUE STRIP */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16 relative z-10">
